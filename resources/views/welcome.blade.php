@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>Honours Project</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -42,6 +42,8 @@
 
         .content {
             text-align: center;
+
+            padding-top: 18%;
         }
 
         .title {
@@ -65,7 +67,6 @@
 </head>
 <body>
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 <div class="content">
     <div class="title m-b-md">
         Honours Project
