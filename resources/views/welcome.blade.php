@@ -64,15 +64,18 @@
     </style>
 </head>
 <body>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 <div class="content">
     <div class="title m-b-md">
         Honours Project
     </div>
 
     <div class="links">
-        <a href="{{route('QR')}}">QR Code</a>
-        <a href="{{route('shamir')}}">Shamirs</a>
-        <a href="">GitHub</a>
+        <a href="{{URL::to('/gen')}}">Generate</a>
+        <a href="{{URL::to('/scan')}}">Scan</a>
+        <a href="{{URL::to('/aes')}}">AES</a>
+        <a href="https://github.com/JAParsons/HonoursProject">GitHub</a>
     </div>
 </div>
 </body>

@@ -22,3 +22,7 @@ Route::get('/scan', function () {
 Route::get('/gen', function () {
     return view('generate');
 });
+
+Route::get('/aes', function () {
+    return view('aes');
+});
