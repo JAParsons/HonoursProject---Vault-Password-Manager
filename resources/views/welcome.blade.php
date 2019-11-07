@@ -76,6 +76,7 @@
         <a href="{{URL::to('/gen')}}">Generate</a>
         <a href="{{URL::to('/scan')}}">Scan</a>
         <a href="{{URL::to('/aes')}}">AES</a>
+        <a href="{{URL::to('/ssss')}}">Shamir</a>
         <a href="https://github.com/JAParsons/HonoursProject">GitHub</a>
     </div>
 </div>

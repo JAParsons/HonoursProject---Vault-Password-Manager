@@ -26,3 +26,7 @@ Route::get('/gen', function () {
 Route::get('/aes', function () {
     return view('aes');
 });
+
+Route::get('/ssss', function () {
+    return view('ssss');
+});
