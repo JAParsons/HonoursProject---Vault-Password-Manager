@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    <h2>Honours Project</h2>
 
     <script src={{asset('js/instascan.min.js')}}></script>
 
