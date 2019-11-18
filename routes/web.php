@@ -14,3 +14,19 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/scan', function () {
+    return view('scan');
+});
+
+Route::get('/gen', function () {
+    return view('generate');
+});
+
+Route::get('/aes', function () {
+    return view('aes');
+});
+
+Route::get('/ssss', function () {
+    return view('ssss');
+});
