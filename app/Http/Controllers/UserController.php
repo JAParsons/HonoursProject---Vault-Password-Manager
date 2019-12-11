@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    //takes a request obj and posts
+    //takes a request obj and post new user to DB
     public function postRegister(Request $request)
     {
         $email = $request['email'];
@@ -21,11 +22,19 @@ class UserController extends Controller
 
         $user->save(); //save to DB
 
-        return redirect()->back();
+        return redirect()->route('dashboard');
     }
 
     public function postLogin(Request $request)
     {
+        if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])){
+            return redirect()->route('dashboard');
+        }
+        return redirect()->back();
+    }
 
+    public function getDashboard()
+    {
+        return view('dashboard');
     }
 }

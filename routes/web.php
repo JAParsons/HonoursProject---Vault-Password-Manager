@@ -11,6 +11,9 @@
 |
 */
 
+//use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -35,9 +38,19 @@ Route::get('/login', function () {
     return view('login');
 });
 
-Route::group(['middleware' => ['web']], function (){
+Route::group(['middleware' => ['web']], function () {
     Route::post('/register',[
         'uses' => 'UserController@postRegister',
         'as' => 'register'
+    ]);
+
+    Route::get('/dashboard', [
+        'uses' => 'UserController@getDashboard',
+        'as' => 'dashboard'
+    ]);
+
+    Route::post('login', [
+        'uses' => 'UserController@postLogin',
+        'as' => 'login'
     ]);
 });

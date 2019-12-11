@@ -11,8 +11,7 @@
     <div class="row">
         <div class="col-md-5">
             <h3>Login</h3>
-{{--            <form action="{{route('login')}}" method="post">--}}
-            <form action="" method="post">
+            <form action="{{route('login')}}" method="post">
                 <div class="form-group">
                     <label for="email">E-mail</label>
                     <input class="form-control" type="text" name="email" id="email">
