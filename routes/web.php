@@ -30,3 +30,14 @@ Route::get('/aes', function () {
 Route::get('/ssss', function () {
     return view('ssss');
 });
+
+Route::get('/login', function () {
+    return view('login');
+});
+
+Route::group(['middleware' => ['web']], function (){
+    Route::post('/register',[
+        'uses' => 'UserController@postRegister',
+        'as' => 'register'
+    ]);
+});
