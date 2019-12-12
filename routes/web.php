@@ -39,14 +39,14 @@ Route::get('/login', function () {
 });
 
 Route::group(['middleware' => ['web']], function () {
-    Route::post('/register',[
-        'uses' => 'UserController@postRegister',
-        'as' => 'register'
-    ]);
-
     Route::get('/dashboard', [
         'uses' => 'UserController@getDashboard',
         'as' => 'dashboard'
+    ]);
+
+    Route::post('/register',[
+        'uses' => 'UserController@postRegister',
+        'as' => 'register'
     ]);
 
     Route::post('login', [
