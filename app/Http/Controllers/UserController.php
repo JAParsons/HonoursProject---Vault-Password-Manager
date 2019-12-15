@@ -13,12 +13,16 @@ class UserController extends Controller
     {
         $email = $request['email'];
         $name = $request['name'];
-        $password = bcrypt($request['password']); //hash provided password
+        $password = bcrypt($request['reg_password']); //hash provided password
+        $masterKey = $request['enc_master_key'];
+        $masterIV = $request['master_iv'];
 
         $user = new User();
         $user->email = $email;
         $user->name = $name;
         $user->password = $password;
+        $user->master_key = $masterKey;
+        $user->master_iv = $masterIV;
 
         $user->save(); //save to DB
 

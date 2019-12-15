@@ -6,6 +6,8 @@
 
 @section('content')
 
+    <script src={{asset('js/secrets.js')}}></script>
+
     <br><br><br><br><br><br><br><br><br>
 
     <div class="container">
@@ -39,12 +41,33 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input class="form-control form-control {{$errors->has('password') ? 'is-invalid' : ''}}" type="password" name="password" id="password" value="{{Request::old('password')}}">
+                        <input class="form-control form-control {{$errors->has('password') ? 'is-invalid' : ''}}" type="password" name="password" id="reg_password" value="">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
+                    <input type="hidden" name="enc_master_key" value="something" id="enc_master_key">
+                    <input type="hidden" name="master_iv" value="something2" id="master_iv">
                     <input type="hidden" name="_token" value="{{Session::token()}}"> <?php //protection against CSRF by fetching session token?>
                 </form>
             </div>
         </div>
     </div>
+
+    <script>
+        //generate a master key
+        function generateMasterKey(){
+            document.getElementById("enc_master_key").value = secrets.random(512);
+            document.getElementById("master_iv").value = secrets.random(512);
+            console.log("Master: " + document.getElementById("enc_master_key").value);
+            console.log("IV: " + document.getElementById("master_iv").value);
+        }
+
+        //events for the reg_password input box
+        $("#reg_password").
+        on("blur", function () {
+            generateMasterKey();
+        }).
+        on("keydown", function (e) {
+            generateMasterKey();
+        });
+    </script>
 @endsection
