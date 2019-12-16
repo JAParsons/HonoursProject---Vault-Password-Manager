@@ -13,9 +13,11 @@ class UserController extends Controller
     {
         $email = $request['email'];
         $name = $request['name'];
-        $password = bcrypt($request['reg_password']); //hash provided password
+        $password = bcrypt($request['reg_password']); //hash the provided password
         $masterKey = $request['enc_master_key'];
         $masterIV = $request['master_iv'];
+        $kekIV = $request['kek_iv'];
+        $kekSalt = $request['kek_salt'];
 
         $user = new User();
         $user->email = $email;
@@ -23,6 +25,9 @@ class UserController extends Controller
         $user->password = $password;
         $user->master_key = $masterKey;
         $user->master_iv = $masterIV;
+        $user->token = substr(sha1(time()), 0, 32); //generate token for ID purposes
+        $user->kek_iv = $kekIV;
+        $user->kek_salt = $kekSalt;
 
         $user->save(); //save to DB
 
