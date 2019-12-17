@@ -7,6 +7,8 @@
 @section('content')
 
     <script src={{asset('js/secrets.js')}}></script>
+    <script src={{asset('js/crypto-js.js')}}></script> {{--core crypto--}}
+    <script src={{asset('js/pbkdf2.js')}}></script> {{--pbkdf2 implementation--}}
 
     <br><br><br><br><br><br><br><br><br>
 
@@ -46,6 +48,8 @@
                     <button type="submit" class="btn btn-primary">Submit</button>
                     <input type="hidden" name="enc_master_key" value="something" id="enc_master_key">
                     <input type="hidden" name="master_iv" value="something2" id="master_iv">
+                    <input type="hidden" name="kek_iv" value="something3" id="kek_iv">
+                    <input type="hidden" name="kek_salt" value="something4" id="kek_salt">
                     <input type="hidden" name="_token" value="{{Session::token()}}"> <?php //protection against CSRF by fetching session token?>
                 </form>
             </div>
@@ -53,21 +57,51 @@
     </div>
 
     <script>
-        //generate a master key
+        //generate a master key on register
         function generateMasterKey(){
-            document.getElementById("enc_master_key").value = secrets.random(512);
-            document.getElementById("master_iv").value = secrets.random(512);
-            console.log("Master: " + document.getElementById("enc_master_key").value);
+            //generate a key and IV
+            var masterKey = secrets.random(512);
+            var masterIV = secrets.random(512);
+            //get the user-entered password
+            var password = document.getElementById("reg_password").value;
+            //derive the KEK from the password
+            var derivedKey = deriveKey(password);
+
+            //encrypt the master key with the derived KEK
+            var encyptedMaster = aesEncrypt(masterKey, derivedKey, masterIV);
+
+            //set hidden form values
+            document.getElementById("master_iv").value = masterIV;
+            document.getElementById("enc_master_key").value = encyptedMaster;
+
+            console.log("Derived Key: " + derivedKey);
+            console.log("Encrypted Master: " + document.getElementById("enc_master_key").value);
             console.log("IV: " + document.getElementById("master_iv").value);
+        }
+
+        //derive KEK (used to encrypt the master key)
+        function deriveKey(password){
+            //generate new salt
+            var salt = CryptoJS.lib.WordArray.random(128/8);
+
+            //set hidden form value
+            document.getElementById("kek_salt").value = salt;
+
+            //derive key from password with PBKDF2
+            return CryptoJS.PBKDF2(password, salt, { keySize: 16, iterations: 1000 }).toString(CryptoJS.enc.Hex);
+        }
+
+        function aesEncrypt(text, key, iv){
+            return CryptoJS.AES.encrypt(text, key, { iv: iv }).toString();
         }
 
         //events for the reg_password input box
         $("#reg_password").
         on("blur", function () {
             generateMasterKey();
-        }).
-        on("keydown", function (e) {
-            generateMasterKey();
         });
+        // on("keydown", function (e) {
+        //     generateMasterKey();
+        // });
     </script>
 @endsection
