@@ -35,7 +35,7 @@
                 <form action="{{route('register')}}" method="post">
                     <div class="form-group"> <?php //add red outline to invalid form fields ?>
                         <label for="email">E-mail</label>
-                        <input class="form-control {{$errors->has('email') ? 'is-invalid' : ''}}" type="text" name="email" id="email" value="{{Request::old('email')}}"> <?php //maintain old inputs if validation fails ?>
+                        <input class="form-control {{$errors->has('email') ? 'is-invalid' : ''}}" type="text" name="reg_email" id="reg_email" value="{{Request::old('email')}}"> <?php //maintain old inputs if validation fails ?>
                     </div>
                     <div class="form-group">
                         <label for="name">Name</label>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input class="form-control form-control {{$errors->has('password') ? 'is-invalid' : ''}}" type="password" name="password" id="reg_password" value="">
+                        <input class="form-control form-control {{$errors->has('password') ? 'is-invalid' : ''}}" type="password" name="reg_password" id="reg_password" value="">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                     <input type="hidden" name="enc_master_key" value="something" id="enc_master_key">

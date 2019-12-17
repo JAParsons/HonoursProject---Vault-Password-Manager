@@ -11,7 +11,7 @@ class UserController extends Controller
     //takes a request obj and post new user to DB
     public function postRegister(Request $request)
     {
-        $email = $request['email'];
+        $email = $request['reg_email'];
         $name = $request['name'];
         $password = bcrypt($request['reg_password']); //hash the provided password
         $masterKey = $request['enc_master_key'];
@@ -31,6 +31,8 @@ class UserController extends Controller
 
         $user->save(); //save to DB
 
+        Auth::login($user);
+
         return redirect()->route('dashboard');
     }
 
@@ -39,7 +41,7 @@ class UserController extends Controller
         if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])){
             return redirect()->route('dashboard');
         }
-        return redirect()->back();
+        return redirect()->route('login');
     }
 
     public function getDashboard()
