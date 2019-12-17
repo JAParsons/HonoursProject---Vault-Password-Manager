@@ -41,7 +41,8 @@ Route::get('/login', function () {
 Route::group(['middleware' => ['web']], function () {
     Route::get('/dashboard', [
         'uses' => 'UserController@getDashboard',
-        'as' => 'dashboard'
+        'as' => 'dashboard',
+        'middleware' => 'auth'
     ]);
 
     Route::post('/register',[
