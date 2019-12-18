@@ -105,6 +105,7 @@
             </ul>
         </div>
     </nav><!-- NavBar END -->
+
     <!-- Bootstrap row -->
     <div class="row" id="body-row">
         <!-- Sidebar -->
@@ -201,16 +202,27 @@
                 </li>
             </ul><!-- List Group END-->
         </div><!-- sidebar-container END -->
+
         <!-- MAIN -->
         <div class="col p-4">
             <h1 class="display-4">Password Dashboard</h1>
-            <div class="card">
-                <h5 class="card-header font-weight-light">Password</h5>
-                <div class="card-body">
-                    A Password
+                <div class="card-deck">
+                    @foreach($storedPasswords as $storedPassword)
+                        <div class="card" style="max-width: 18rem; min-width: 18rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $storedPassword->website_name }}</h5>
+                                <p class="card-text">Email:   {{ $storedPassword->email }}</p>
+                                <p class="card-text">Encrypted Password:   {{ $storedPassword->password }}</p>
+                                <a href="#" class="btn btn-primary">Copy to Clipboard</a>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Last updated 3 mins ago</small>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-            </div>
         </div><!-- Main Col END -->
+
     </div><!-- body-row END -->
 
     <script>
