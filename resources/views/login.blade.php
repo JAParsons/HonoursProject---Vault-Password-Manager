@@ -59,6 +59,7 @@
     <script>
         //generate a master key on register
         function generateMasterKey(){
+            var email = document.getElementById("reg_email").value;
             //generate a key and IV
             var masterKey = secrets.random(512);
             var masterIV = secrets.random(512);
@@ -66,6 +67,9 @@
             var password = document.getElementById("reg_password").value;
             //derive the KEK from the password
             var derivedKey = deriveKey(password);
+
+            //hash the entered email address
+            document.getElementById("reg_password").value = hashPassword(password, email);
 
             //encrypt the master key with the derived KEK
             var encyptedMaster = aesEncrypt(masterKey, derivedKey, masterIV);
@@ -95,6 +99,11 @@
             return CryptoJS.AES.encrypt(text, key, { iv: iv }).toString();
         }
 
+        //hash password client-side before posting
+        function hashPassword(password, salt){
+            return CryptoJS.PBKDF2(password, salt, { keySize: 16, iterations: 1000 }).toString(CryptoJS.enc.Hex);
+        }
+
         //events for the reg_password input box
         $("#reg_password").
         on("blur", function () {
@@ -103,5 +112,13 @@
         // on("keydown", function (e) {
         //     generateMasterKey();
         // });
+
+        //events for the login password input box
+        $("#password").
+        on("blur", function () {
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            document.getElementById("password").value = hashPassword(password, email);
+        });
     </script>
 @endsection

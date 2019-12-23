@@ -216,7 +216,7 @@
                                 <a href="#" class="btn btn-primary">Copy to Clipboard</a>
                             </div>
                             <div class="card-footer">
-                                <small class="text-muted">Last updated 3 mins ago</small>
+                                <small class="text-muted">Last updated x mins ago</small>
                             </div>
                         </div>
                     @endforeach
