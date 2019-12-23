@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->timestamps();
             $table->string('master_key');
             $table->string('master_iv');
-            $table->string('kek_iv');
+            $table->string('master_hash');
             $table->string('kek_salt');
         });
     }

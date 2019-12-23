@@ -7,7 +7,7 @@
 @section('content')
 
     <script src={{asset('js/secrets.js')}}></script>
-    <script src={{asset('js/crypto-js.js')}}></script> {{--core crypto--}}
+    <script src={{asset('js/crypto-js.js')}}></script> {{--core crypto library--}}
     <script src={{asset('js/pbkdf2.js')}}></script> {{--pbkdf2 implementation--}}
 
     <br><br><br><br><br><br><br><br><br>
@@ -48,8 +48,8 @@
                     <button type="submit" class="btn btn-primary">Submit</button>
                     <input type="hidden" name="enc_master_key" value="something" id="enc_master_key">
                     <input type="hidden" name="master_iv" value="something2" id="master_iv">
-                    <input type="hidden" name="kek_iv" value="something3" id="kek_iv">
-                    <input type="hidden" name="kek_salt" value="something4" id="kek_salt">
+                    <input type="hidden" name="kek_salt" value="something3" id="kek_salt">
+                    <input type="hidden" name="master_hash" value="something4" id="master_hash">
                     <input type="hidden" name="_token" value="{{Session::token()}}"> <?php //protection against CSRF by fetching session token?>
                 </form>
             </div>

@@ -16,8 +16,8 @@ class UserController extends Controller
         $password = bcrypt($request['reg_password']); //hash the provided password
         $masterKey = $request['enc_master_key'];
         $masterIV = $request['master_iv'];
-        $kekIV = $request['kek_iv'];
         $kekSalt = $request['kek_salt'];
+        $masterHash = $request['master_hash'];
 
         $user = new User();
         $user->email = $email;
@@ -26,8 +26,8 @@ class UserController extends Controller
         $user->master_key = $masterKey;
         $user->master_iv = $masterIV;
         $user->token = substr(sha1(time()), 0, 32); //generate token for ID purposes
-        $user->kek_iv = $kekIV;
         $user->kek_salt = $kekSalt;
+        $user->master_hash = $masterHash;
 
         $user->save(); //save to DB
 
