@@ -47,9 +47,9 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                     <input type="hidden" name="enc_master_key" value="something" id="enc_master_key">
-                    <input type="hidden" name="master_iv" value="something2" id="master_iv">
-                    <input type="hidden" name="kek_salt" value="something3" id="kek_salt">
-                    <input type="hidden" name="master_hash" value="something4" id="master_hash">
+                    <input type="hidden" name="master_iv" value="something" id="master_iv">
+                    <input type="hidden" name="kek_salt" value="something" id="kek_salt">
+                    <input type="hidden" name="master_hash" value="something" id="master_hash">
                     <input type="hidden" name="_token" value="{{Session::token()}}"> <?php //protection against CSRF by fetching session token?>
                 </form>
             </div>
@@ -67,6 +67,8 @@
             var password = document.getElementById("reg_password").value;
             //derive the KEK from the password
             var derivedKey = deriveKey(password);
+            //hash master with email as salt
+            document.getElementById("master_hash").value = hashPassword(masterKey, email);
 
             //hash the entered email address
             document.getElementById("reg_password").value = hashPassword(password, email);
