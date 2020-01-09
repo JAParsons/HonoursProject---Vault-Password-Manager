@@ -10,6 +10,7 @@ class BackupController extends Controller
 {
     public function getCreateBackup()
     {
-        return view('createBackup');
+        $user = Auth::user();
+        return view('createBackup', ['user' => $user]);
     }
 }

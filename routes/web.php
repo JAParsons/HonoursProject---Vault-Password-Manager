@@ -64,4 +64,9 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         'uses' => 'BackupController@getCreateBackup',
         'as' => 'backup'
     ]);
+
+    Route::post('/postAjaxVerifyPassword', [
+        'uses' => 'AjaxController@postVerifyPassword',
+        'as' => 'verify'
+    ]);
 });
