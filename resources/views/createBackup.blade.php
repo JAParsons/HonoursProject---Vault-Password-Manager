@@ -46,6 +46,7 @@
                 </div>
             </div>
         </div>
+        <button type="button" class="btn btn-primary" onclick="location.href='{{url('dashboard')}}'">Continue</button>
     </div>
 
     <script>
@@ -60,36 +61,31 @@
 
             var password = document.getElementById('password').value;
 
-            var hashedPassword = hashPassword(document.getElementById('password').value, @json($user->email));
+            var hashedPassword = pbkdf2(document.getElementById('password').value, @json($user->email));
 
             //derive kek
-            var kek = deriveKey(password, kekSalt);
+            var kek = pbkdf2(password, kekSalt);
             console.log('kek: ' + kek);
 
             //decrypt master key
             var masterKey = aesDecrypt(encMaster, kek, masterIV);
             console.log('master: ' + masterKey);
 
-            //construct json obj to store in QR code
-            var data = {
-                'token': token,
-                'master': masterKey,
-                'hash': masterHash
-            };
-            console.log(JSON.stringify(data));
+            //concat strings to store in QR code
+            var data = token + masterKey + masterHash;
 
             //generate QR code backups
-            genShamir(JSON.stringify(data), 3, 2);
+            genShamir(data, 3, 2);
             generateCodes(3);
         }
 
         //onclick ajax request for verifying the user before generating backups
         $('#verify').on('click', function () {
-            var hashedPassword = hashPassword(document.getElementById('password').value, @json($user->email));
+            var hashedPassword = pbkdf2(document.getElementById('password').value, @json($user->email));
             $.ajax({
                 method: 'POST',
                 url: '{{ route('verify') }}',
-                data: {password: hashedPassword, _token: '{{ Session::token() }}'}
+                data: {password: hashedPassword, _token: '{{Session::token()}}'}
             })
             .done(function (msg) {
                 console.log(msg);
@@ -101,24 +97,20 @@
 
     <script>
         function genShamir(text, fragments, threshold){
-            var pw = text;
-            console.log(pw);
-            // convert the text into a hex string
-            var pwHex = secrets.str2hex(pw); // => hex string
-            console.log(pwHex);
-            // split into 3 shares, with a threshold of 2
-            shares = secrets.share(pwHex, fragments, threshold);
+            // split into 3 shares, with a threshold of 2, text must be hex
+            shares = secrets.share(text, fragments, threshold); //needs hex input hence compression or JSON would inflate the size - best solution is to concatenate the 3 existing hex components
             console.log(shares);
 
             for(i=0; i<shares.length; i++){
-                shares[i] = btoa(shares[i]); //todo use compression algo to reduce size of shares
+                shares[i] = shares[i];
+                console.log(shares[i]);
             }
         }
 
         function createQrCode(divId, text){
             var qrcode = new QRCode(divId, {
-                width: 400,
-                height: 400,
+                width: 300,
+                height: 300,
                 correctLevel : QRCode.CorrectLevel.L
             });
             qrcode.makeCode(text);
@@ -131,14 +123,8 @@
             }
         }
 
-        //hash password client-side before posting
-        function hashPassword(password, salt){
-            return CryptoJS.PBKDF2(password, salt, { keySize: 16, iterations: 1000 }).toString(CryptoJS.enc.Hex);
-        }
-
-        //derive KEK (used to decrypt the master key)
-        function deriveKey(password, salt){
-            //derive key from password with PBKDF2
+        //used to hash password or derive key
+        function pbkdf2(password, salt){
             return CryptoJS.PBKDF2(password, salt, { keySize: 16, iterations: 1000 }).toString(CryptoJS.enc.Hex);
         }
 
