@@ -73,6 +73,7 @@
     </div>
 
     <div class="links">
+        <a href="{{URL::to('/login')}}">Login</a>
         <a href="{{URL::to('/gen')}}">Generate</a>
         <a href="{{URL::to('/scan')}}">Scan</a>
         <a href="{{URL::to('/aes')}}">AES</a>

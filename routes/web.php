@@ -11,6 +11,10 @@
 |
 */
 
+//use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route;
+
+//routes for sandbox demos
 Route::get('/', function () {
     return view('welcome');
 });
@@ -29,4 +33,40 @@ Route::get('/aes', function () {
 
 Route::get('/ssss', function () {
     return view('ssss');
+});
+
+Route::get('/login', function () {
+    return view('login');
+});
+
+
+//standard route group
+Route::group(['middleware' => ['web']], function () {
+    Route::post('/register',[
+        'uses' => 'UserController@postRegister',
+        'as' => 'register'
+    ]);
+
+    Route::post('login', [
+        'uses' => 'UserController@postLogin',
+        'as' => 'login'
+    ]);
+});
+
+//protected routes that require authorisation
+Route::group(['middleware' => ['web', 'auth']], function () {
+    Route::get('/dashboard', [
+        'uses' => 'StoredPasswordController@getDashboard',
+        'as' => 'dashboard'
+    ]);
+
+    Route::get('/generateBackup', [
+        'uses' => 'BackupController@getCreateBackup',
+        'as' => 'backup'
+    ]);
+
+    Route::post('/postAjaxVerifyPassword', [
+        'uses' => 'AjaxController@postVerifyPassword',
+        'as' => 'verify'
+    ]);
 });
