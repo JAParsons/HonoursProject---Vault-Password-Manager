@@ -69,10 +69,10 @@
             var derivedKey = deriveKey(password);
             console.log('plain password: ' + document.getElementById("reg_password").value);
             //hash master with email as salt
-            document.getElementById("master_hash").value = hashPassword(masterKey, email);
+            document.getElementById("master_hash").value = pbkdf2(masterKey, email);
             console.log('salt form value: ' + document.getElementById("kek_salt").value);
             //hash the entered email address
-            document.getElementById("reg_password").value = hashPassword(password, email);
+            document.getElementById("reg_password").value = pbkdf2(password, email);
             console.log("Hashed Password: " + document.getElementById("reg_password").value);
 
             //encrypt the master key with the derived KEK
@@ -98,7 +98,7 @@
             //set hidden form value
             document.getElementById("kek_salt").value = salt;
             //derive key from password with PBKDF2
-            return CryptoJS.PBKDF2(password, salt, { keySize: 16, iterations: 1000 }).toString(CryptoJS.enc.Hex); ;
+            return pbkdf2(password, salt);
         }
 
         function aesEncrypt(text, key, iv){
@@ -106,7 +106,7 @@
         }
 
         //hash password client-side before posting
-        function hashPassword(password, salt){
+        function pbkdf2(password, salt){
             return CryptoJS.PBKDF2(password, salt, { keySize: 16, iterations: 1000 }).toString(CryptoJS.enc.Hex);
         }
 
@@ -124,7 +124,7 @@
         on("blur", function () {
             var email = document.getElementById("email").value;
             var password = document.getElementById("password").value;
-            document.getElementById("password").value = hashPassword(password, email);
+            document.getElementById("password").value = pbkdf2(password, email);
         });
     </script>
 @endsection

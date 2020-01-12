@@ -123,7 +123,7 @@
             }
         }
 
-        //used to hash password or derive key
+        //hash password or derive key
         function pbkdf2(password, salt){
             return CryptoJS.PBKDF2(password, salt, { keySize: 16, iterations: 1000 }).toString(CryptoJS.enc.Hex);
         }
