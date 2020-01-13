@@ -205,16 +205,21 @@
 
         <!-- MAIN -->
         <div class="col p-4">
-            <h1 class="display-4">Password Dashboard</h1>
+            <h1 class="display-4 text-center">Password Dashboard</h1>
+            <br>
+            <div class="d-flex pl-1">
+                <button type="button" class="btn btn-success" onclick="location.href='{{url('dashboard')}}'">Add</button>
+            </div>
                 <div class="card-deck">
                     @foreach($storedPasswords as $storedPassword)
-                        <div class="d-flex p-2">
+                        <div class="d-flex p-1 pt-3">
                             <div class="card" style="max-width: 18rem; min-width: 18rem;">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ $storedPassword->website_name }}</h5>
-                                    <p class="card-text">Email:   {{ $storedPassword->email }}</p>
-                                    <p class="card-text">Encrypted Password:   {{ $storedPassword->password }}</p>
-                                    <a href="#" class="btn btn-primary">Copy to Clipboard</a>
+                                    <h5 class="card-title">{{$storedPassword->website_name}}</h5>
+                                    <p class="card-text">Email:   {{$storedPassword->email}}</p>
+                                    <p class="card-text">Encrypted Password:   {{$storedPassword->password}}</p>
+                                    <button class="btn btn-primary">Copy to Clipboard</button>
+                                    <button class="btn btn-danger">Delete</button>
                                 </div>
                                 <div class="card-footer">
                                     <small class="text-muted">Last updated x mins ago</small>
