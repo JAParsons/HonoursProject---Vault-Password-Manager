@@ -24,4 +24,23 @@ class AjaxController extends Controller
                 'msg' => $request->password,
             ));
     }
+
+    //post the generated master hash
+    public function postMasterHash(Request $request)
+    {
+        $success = false;
+        $user = Auth::user();
+
+        $user->master_hash = $request->masterHash;
+
+        if ($user->save()){
+            $success = true;
+        }
+
+        return response()->
+        json($response = array(
+            'success' => $success,
+            'msg' => $request->masterHash
+        ));
+    }
 }

@@ -68,9 +68,11 @@
             //derive the KEK from the password
             var derivedKey = deriveKey(password);
             console.log('plain password: ' + document.getElementById("reg_password").value);
+
             //hash master with email as salt
-            document.getElementById("master_hash").value = pbkdf2(masterKey, email);
-            console.log('salt form value: ' + document.getElementById("kek_salt").value);
+            // document.getElementById("master_hash").value = pbkdf2(masterKey, email);
+            // console.log('salt form value: ' + document.getElementById("kek_salt").value);
+
             //hash the entered email address
             document.getElementById("reg_password").value = pbkdf2(password, email);
             console.log("Hashed Password: " + document.getElementById("reg_password").value);

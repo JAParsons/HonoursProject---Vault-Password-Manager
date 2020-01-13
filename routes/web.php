@@ -69,4 +69,9 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         'uses' => 'AjaxController@postVerifyPassword',
         'as' => 'verify'
     ]);
+
+    Route::post('/postAjaxMasterHash', [
+        'uses' => 'AjaxController@postMasterHash',
+        'as' => 'postMasterHash'
+    ]);
 });

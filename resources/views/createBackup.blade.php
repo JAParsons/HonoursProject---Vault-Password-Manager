@@ -10,7 +10,6 @@
     <script src={{asset('js/crypto-js.js')}}></script> {{--core crypto library--}}
     <script src={{asset('js/pbkdf2.js')}}></script> {{--pbkdf2 implementation--}}
     <script src={{asset('js/qrcode.js')}}></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> {{--load jQuery--}}
 
     <br>
 
@@ -56,7 +55,6 @@
             var encMaster = @json($user->master_key);
             var masterIV = @json($user->master_iv);
             var kekSalt = @json($user->kek_salt);
-            var masterHash = @json($user->master_hash);
             var token = @json($user->token);
 
             var password = document.getElementById('password').value;
@@ -71,8 +69,18 @@
             var masterKey = aesDecrypt(encMaster, kek, masterIV);
             console.log('master: ' + masterKey);
 
+            //generate salt and compute master hash
+            var masterSalt = secrets.random(128);
+            var masterHash = pbkdf2(masterKey, masterSalt);
+
+            console.log('master salt: ' + masterSalt);
+            console.log('master hash: ' + masterHash);
+
+            //write master hash to db
+            postMasterHash(masterHash, masterSalt);
+
             //concat strings to store in QR code
-            var data = token + masterKey + masterHash;
+            var data = token + masterKey + masterSalt;
 
             //generate QR code backups
             genShamir(data, 3, 2);
@@ -84,7 +92,7 @@
             var hashedPassword = pbkdf2(document.getElementById('password').value, @json($user->email));
             $.ajax({
                 method: 'POST',
-                url: '{{ route('verify') }}',
+                url: '{{route('verify')}}',
                 data: {password: hashedPassword, _token: '{{Session::token()}}'}
             })
             .done(function (msg) {
@@ -93,6 +101,18 @@
                 generateBackup();
             });
         });
+
+        //ajax request to post hashed master to db
+        function postMasterHash(masterHash){
+            $.ajax({
+                method: 'POST',
+                url: '{{route('postMasterHash')}}',
+                data: {masterHash: masterHash, _token: '{{Session::token()}}'}
+            })
+                .done(function (msg) {
+                    console.log(msg);
+                });
+        }
     </script>
 
     <script>
