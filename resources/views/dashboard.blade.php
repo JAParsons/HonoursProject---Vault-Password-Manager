@@ -5,6 +5,12 @@
 @endsection
 
 @section('content')
+
+    <script src={{asset('js/secrets.js')}}></script>
+    <script src={{asset('js/crypto-js.js')}}></script> {{--core crypto library--}}
+    <script src={{asset('js/pbkdf2.js')}}></script> {{--pbkdf2 implementation--}}
+    <script src={{asset('js/qrcode.js')}}></script>
+
     <style>
         #body-row {
             margin-left:0;
@@ -250,7 +256,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-primary" onclick=verifyPassword()>Submit</button>
                     </div>
                 </div>
             </div>
@@ -302,6 +308,9 @@
 
     <script>
         var password = '';
+        var encMaster = '';
+        var masterIV = '';
+        var kekSalt = '';
 
         //open modal if password has been entered otherwise ask for password confirmation
         function openModal(id){
@@ -313,14 +322,40 @@
             }
         }
 
+        function toggleModal(id){
+            $('#'+id).modal('toggle');
+        }
+
         //check if the user has entered their password or not
         function checkIfPassword(){
-            if(password){
-                return true;
-            }
-            else{
-                return false;
-            }
+            if(password){ return true; }
+            else{ return false; }
+        }
+
+        //ajax request to verify a password to the logged in user
+        function verifyPassword(){
+            var hashedPassword = pbkdf2(document.getElementById('password').value, @json($user->email));
+
+            $.ajax({
+                method: 'POST',
+                url: '{{route('verify')}}',
+                data: {password: hashedPassword, _token: '{{Session::token()}}'}
+            })
+                .done(function (msg) {
+                    console.log(msg);
+
+                    if(msg.success){
+                        password = document.getElementById('password').value;
+                    }
+
+                    document.getElementById('password').value = '';
+                    toggleModal('passwordModal')
+                });
+        }
+
+        //hash password or derive key
+        function pbkdf2(password, salt){
+            return CryptoJS.PBKDF2(password, salt, { keySize: 16, iterations: 1000 }).toString(CryptoJS.enc.Hex);
         }
     </script>
 
