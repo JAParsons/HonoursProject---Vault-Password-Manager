@@ -31,7 +31,7 @@ class AjaxController extends Controller
         $success = false;
         $user = Auth::user();
 
-        $user->master_hash = $request->masterHash;
+        $user->master_hash = bcrypt($request->masterHash);
 
         if ($user->save()){
             $success = true;
