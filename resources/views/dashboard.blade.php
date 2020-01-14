@@ -208,7 +208,7 @@
             <h1 class="display-4 text-center">Password Dashboard</h1>
             <br>
             <div class="d-flex pl-1">
-                <button type="button" class="btn btn-success" onclick="location.href='{{url('dashboard')}}'">Add</button>
+                <button type="button" class="btn btn-success" onclick=openModal('addModal')>Add</button>
             </div>
                 <div class="card-deck">
                     @foreach($storedPasswords as $storedPassword)
@@ -230,7 +230,99 @@
                 </div>
         </div><!-- Main Col END -->
 
+        <!-- Modal for confirming account password -->
+        <div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="passwordModalLabel">Please confirm your Vault password</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="password" class="col-form-label">Password:</label>
+                                <input type="password" class="form-control" id="password">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for adding a new password to store -->
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel">Add a new password to your vault</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="name" class="col-form-label">Account Name:</label>
+                                <input type="text" class="form-control" id="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="url" class="col-form-label">URL:</label>
+                                <input type="text" class="form-control" id="url">
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="col-form-label">Email:</label>
+                                <input type="email" class="form-control" id="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="col-form-label">Password:</label>
+                                <input type="password" class="form-control" id="accountPassword">
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="col-form-label">Confirm Password:</label>
+                                <input type="password" class="form-control" id="confirmAccountPassword">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div><!-- body-row END -->
+
+    <script>
+        var password = '';
+
+        //open modal if password has been entered otherwise ask for password confirmation
+        function openModal(id){
+            if(checkIfPassword()){
+                $('#'+id).modal('toggle');
+            }
+            else{
+                $('#passwordModal').modal('toggle');
+            }
+        }
+
+        //check if the user has entered their password or not
+        function checkIfPassword(){
+            if(password){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+    </script>
 
     <script>
         // Hide submenus
