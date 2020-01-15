@@ -216,7 +216,7 @@
             <div class="d-flex pl-1">
                 <button type="button" class="btn btn-success" onclick=openModal('addModal')>Add</button>
             </div>
-                <div class="card-deck">
+                <div class="card-deck" id="cardDeck">
                     @foreach($storedPasswords as $storedPassword)
                         <div class="d-flex p-1 pt-3">
                             <div class="card" style="max-width: 18rem; min-width: 18rem;">
@@ -288,17 +288,17 @@
                             </div>
                             <div class="form-group">
                                 <label for="password" class="col-form-label">Password:</label>
-                                <input type="password" class="form-control" id="accountPassword">
+                                <input type="password" class="form-control" id="passwordToStore">
                             </div>
                             <div class="form-group">
                                 <label for="password" class="col-form-label">Confirm Password:</label>
-                                <input type="password" class="form-control" id="confirmAccountPassword">
+                                <input type="password" class="form-control" id="confirmPasswordToStore">
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-primary" onclick="postAddPassword()">Submit</button>
                     </div>
                 </div>
             </div>
@@ -311,6 +311,8 @@
         var encMaster = '';
         var masterIV = '';
         var kekSalt = '';
+        var kek = '';
+        var masterKey = '';
 
         //open modal if password has been entered otherwise ask for password confirmation
         function openModal(id){
@@ -344,18 +346,88 @@
                 .done(function (msg) {
                     console.log(msg);
 
+                    //if successful then get crypto components and derive the KEK
                     if(msg.success){
                         password = document.getElementById('password').value;
+                        encMaster = @json($user->master_key);
+                        masterIV = @json($user->master_iv);
+                        kekSalt = @json($user->kek_salt);
+                        kek = pbkdf2(password, kekSalt);
+                        toggleModal('passwordModal');
+                        toggleModal('addModal');
                     }
 
                     document.getElementById('password').value = '';
-                    toggleModal('passwordModal')
+                });
+        }
+
+        function postAddPassword(){
+            //todo validation
+            //decrypt master key
+            masterKey = aesDecrypt(encMaster, kek, masterIV);
+
+            var passwordIV = secrets.random(512);
+            var passwordToStore = document.getElementById('passwordToStore').value;
+            //encrypt the password with the master key
+            var encyptedPassword = aesEncrypt(passwordToStore, masterKey, passwordIV);
+
+            //get form values
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var url = document.getElementById('url').value;
+
+            //clear form values
+            document.getElementById('passwordToStore').value = '';
+            document.getElementById('confirmPasswordToStore').value = '';
+
+            $.ajax({
+                method: 'POST',
+                url: '{{route('postAddPassword')}}',
+                data: {password: encyptedPassword, iv: passwordIV, email: email, name: name, url: url, _token: '{{Session::token()}}'}
+            })
+                .done(function (msg) {
+                    console.log(msg);
+
+                    if(msg.success){
+                        toggleModal('addModal');
+                        $('#cardDeck').append(
+                            '                        <div class="d-flex p-1 pt-3">\n' +
+                            '                            <div class="card" style="max-width: 18rem; min-width: 18rem;">\n' +
+                            '                                <div class="card-body">\n' +
+                            '                                    <h5 class="card-title">' + name + '</h5>\n' +
+                            '                                    <p class="card-text">Email: ' + email + '</p>\n' +
+                            '                                    <p class="card-text">Encrypted Password: ' + encyptedPassword + '</p>\n' +
+                            '                                    <button class="btn btn-primary">Copy to Clipboard</button>\n' +
+                            '                                    <button class="btn btn-danger">Delete</button>\n' +
+                            '                                </div>\n' +
+                            '                                <div class="card-footer">\n' +
+                            '                                    <small class="text-muted">Last updated x mins ago</small>\n' +
+                            '                                </div>\n' +
+                            '                            </div>\n' +
+                            '                        </div>'
+                        );
+
+                        //clear form values
+                        document.getElementById('name').value = '';
+                        document.getElementById('url').value = '';
+                        document.getElementById('email').value = '';
+                        document.getElementById('passwordToStore').value = '';
+                        document.getElementById('confirmPasswordToStore').value = '';
+                    }
                 });
         }
 
         //hash password or derive key
         function pbkdf2(password, salt){
             return CryptoJS.PBKDF2(password, salt, { keySize: 16, iterations: 1000 }).toString(CryptoJS.enc.Hex);
+        }
+
+        function aesEncrypt(text, key, iv){
+            return CryptoJS.AES.encrypt(text, key, { iv: iv }).toString();
+        }
+
+        function aesDecrypt(text, key, iv){
+            return CryptoJS.AES.decrypt(text, key, { iv: iv, padding: CryptoJS.pad.Pkcs7, mode: CryptoJS.mode.CBC }).toString(CryptoJS.enc.Utf8);
         }
     </script>
 

@@ -74,4 +74,9 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         'uses' => 'AjaxController@postMasterHash',
         'as' => 'postMasterHash'
     ]);
+
+    Route::post('/postAjaxAddStoredPassword', [
+        'uses' => 'AjaxController@postAddStoredPassword',
+        'as' => 'postAddPassword'
+    ]);
 });
