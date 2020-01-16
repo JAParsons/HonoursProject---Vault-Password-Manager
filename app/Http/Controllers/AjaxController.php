@@ -64,6 +64,21 @@ class AjaxController extends Controller
 
         return response()->
         json($response = array(
+            'success' => $success,
+            'id' => $storedPassword->id
+        ));
+    }
+
+    function postDeleteStoredPassword(Request $request){
+        $success = false;
+        $user = Auth::user();
+
+        if (StoredPassword::where(['id' => $request->id, 'user_token' => $user->token])->delete()){
+            $success = true;
+        }
+
+        return response()->
+        json($response = array(
             'success' => $success
         ));
     }

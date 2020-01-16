@@ -218,17 +218,17 @@
             </div>
                 <div class="card-deck" id="cardDeck">
                     @foreach($storedPasswords as $storedPassword)
-                        <div class="d-flex p-1 pt-3">
+                        <div class="d-flex p-1 pt-3" id="{{$storedPassword->id}}">
                             <div class="card" style="max-width: 18rem; min-width: 18rem;">
                                 <div class="card-body">
                                     <h5 class="card-title">{{$storedPassword->website_name}}</h5>
                                     <p class="card-text">Email:   {{$storedPassword->email}}</p>
                                     <p class="card-text">Encrypted Password:   {{$storedPassword->password}}</p>
                                     <button class="btn btn-primary">Copy to Clipboard</button>
-                                    <button class="btn btn-danger">Delete</button>
+                                    <button class="btn btn-danger" onclick="confirmDeletePassword({{$storedPassword->id}})">Delete</button>
                                 </div>
                                 <div class="card-footer">
-                                    <small class="text-muted">Last updated x mins ago</small>
+                                    <small class="text-muted">Last updated {{$storedPassword->updated_at->diffForHumans()}}</small>
                                 </div>
                             </div>
                         </div>
@@ -304,6 +304,27 @@
             </div>
         </div>
 
+        <!-- Modal for confirming a delete -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel">Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to remove this password from your vault?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-primary" id="confirm">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div><!-- body-row END -->
 
     <script>
@@ -361,6 +382,13 @@
                 });
         }
 
+        function confirmDeletePassword(id){
+
+            //add delete event to confirm button
+            document.getElementById('confirm').setAttribute('onclick', 'postDeletePassword(' + id + ')');
+            toggleModal('deleteModal');
+        }
+
         function postAddPassword(){
             //todo validation
             //decrypt master key
@@ -391,17 +419,17 @@
                     if(msg.success){
                         toggleModal('addModal');
                         $('#cardDeck').append(
-                            '                        <div class="d-flex p-1 pt-3">\n' +
+                            '                        <div class="d-flex p-1 pt-3" id=' + msg.id + '>\n' +
                             '                            <div class="card" style="max-width: 18rem; min-width: 18rem;">\n' +
                             '                                <div class="card-body">\n' +
                             '                                    <h5 class="card-title">' + name + '</h5>\n' +
                             '                                    <p class="card-text">Email: ' + email + '</p>\n' +
                             '                                    <p class="card-text">Encrypted Password: ' + encyptedPassword + '</p>\n' +
                             '                                    <button class="btn btn-primary">Copy to Clipboard</button>\n' +
-                            '                                    <button class="btn btn-danger">Delete</button>\n' +
+                            '                                    <button class="btn btn-danger" onclick=confirmDeletePassword(' + msg.id + ')>Delete</button>\n' +
                             '                                </div>\n' +
                             '                                <div class="card-footer">\n' +
-                            '                                    <small class="text-muted">Last updated x mins ago</small>\n' +
+                            '                                    <small class="text-muted">Last updated just now</small>\n' +
                             '                                </div>\n' +
                             '                            </div>\n' +
                             '                        </div>'
@@ -413,6 +441,24 @@
                         document.getElementById('email').value = '';
                         document.getElementById('passwordToStore').value = '';
                         document.getElementById('confirmPasswordToStore').value = '';
+                    }
+                });
+        }
+
+        function postDeletePassword(id){
+
+            $.ajax({
+                method: 'POST',
+                url: '{{route('postDeletePassword')}}',
+                data: {id: id, _token: '{{Session::token()}}'}
+            })
+                .done(function (msg) {
+                    console.log(msg);
+
+                    //if successful then remove the associated html
+                    if(msg.success){
+                        $('#'+id).remove();
+                        toggleModal('deleteModal');
                     }
                 });
         }
