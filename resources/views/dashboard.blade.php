@@ -75,6 +75,12 @@
             text-align: right;
             padding-left: 10px;
         }
+
+        .clickableElement {
+            cursor: pointer;
+            text-decoration : none;
+            color : #000000;
+        }
     </style>
 
     <!-- Bootstrap NavBar -->
@@ -219,15 +225,18 @@
                 <div class="card-deck" id="cardDeck">
                     @foreach($storedPasswords as $storedPassword)
                         <div class="d-flex p-1 pt-3" id="{{$storedPassword->id}}">
-                            <div class="card" style="max-width: 18rem; min-width: 18rem;">
+                           <div class="card" style="max-width: 18rem; min-width: 18rem;">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{$storedPassword->website_name}}</h5>
-                                    <p class="card-text">Email:   {{$storedPassword->email}}</p>
-                                    <p class="card-text">Encrypted Password:   {{$storedPassword->password}}</p>
+                                    <div class="clickableElement" onclick="openModal('editModal')">
+                                        <h5 class="card-title ">{{$storedPassword->website_name}} <img src="https://www.google.com/s2/favicons?domain_url={{$storedPassword->website_url}}"></h5>
+                                        <p class="card-text">Email:   {{$storedPassword->email}}</p>
+                                        <p class="card-text">Encrypted Password:   {{$storedPassword->password}}</p>
+                                    </div>
+                                    <br>
                                     <button class="btn btn-primary">Copy to Clipboard</button>
                                     <button class="btn btn-danger" onclick="confirmDeletePassword({{$storedPassword->id}})">Delete</button>
                                 </div>
-                                <div class="card-footer">
+                                <div class="card-footer clickableElement" onclick="openModal('editModal')">
                                     <small class="text-muted">Last updated {{$storedPassword->updated_at->diffForHumans()}}</small>
                                 </div>
                             </div>
@@ -256,7 +265,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick=verifyPassword()>Submit</button>
+                        <button type="button" class="btn btn-primary" id="confirmPasswordButton" >Submit</button>
                     </div>
                 </div>
             </div>
@@ -325,6 +334,52 @@
             </div>
         </div>
 
+        <!-- Modal for viewing and editing a stored password -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel">Account Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="name" class="col-form-label">Account Name:</label>
+                                <input type="text" class="form-control" id="editName">
+                            </div>
+                            <div class="form-group">
+                                <label for="url" class="col-form-label">URL:</label>
+                                <input type="text" class="form-control" id="editUrl">
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="col-form-label">Email:</label>
+                                <input type="email" class="form-control" id="editEmail">
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="col-form-label">Password:</label>
+                                <input type="text" class="form-control" id="storedPassword" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="col-form-label">New Password:</label>
+                                <input type="password" class="form-control" id="newPasswordToStore">
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="col-form-label">Confirm New Password:</label>
+                                <input type="password" class="form-control" id="confirmNewPasswordToStore">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div><!-- body-row END -->
 
     <script>
@@ -341,6 +396,8 @@
                 $('#'+id).modal('toggle');
             }
             else{
+                //set onclick event to be the verify password function with the desired modal as a param
+                document.getElementById('confirmPasswordButton').setAttribute('onclick', 'verifyPassword(' + '"' + id + '"' + ')');
                 $('#passwordModal').modal('toggle');
             }
         }
@@ -356,7 +413,7 @@
         }
 
         //ajax request to verify a password to the logged in user
-        function verifyPassword(){
+        function verifyPassword(desiredModal){
             var hashedPassword = pbkdf2(document.getElementById('password').value, @json($user->email));
 
             $.ajax({
@@ -375,7 +432,8 @@
                         kekSalt = @json($user->kek_salt);
                         kek = pbkdf2(password, kekSalt);
                         toggleModal('passwordModal');
-                        toggleModal('addModal');
+                        console.log('HERE: ' + desiredModal);
+                        toggleModal(desiredModal);
                     }
 
                     document.getElementById('password').value = '';
@@ -397,7 +455,7 @@
             var passwordIV = secrets.random(512);
             var passwordToStore = document.getElementById('passwordToStore').value;
             //encrypt the password with the master key
-            var encyptedPassword = aesEncrypt(passwordToStore, masterKey, passwordIV);
+            var encryptedPassword = aesEncrypt(passwordToStore, masterKey, passwordIV);
 
             //get form values
             var name = document.getElementById('name').value;
@@ -411,20 +469,21 @@
             $.ajax({
                 method: 'POST',
                 url: '{{route('postAddPassword')}}',
-                data: {password: encyptedPassword, iv: passwordIV, email: email, name: name, url: url, _token: '{{Session::token()}}'}
+                data: {password: encryptedPassword, iv: passwordIV, email: email, name: name, url: url, _token: '{{Session::token()}}'}
             })
                 .done(function (msg) {
                     console.log(msg);
 
                     if(msg.success){
                         toggleModal('addModal');
+                        var favicon = 'https://www.google.com/s2/favicons?domain_url=' + url;
                         $('#cardDeck').append(
                             '                        <div class="d-flex p-1 pt-3" id=' + msg.id + '>\n' +
                             '                            <div class="card" style="max-width: 18rem; min-width: 18rem;">\n' +
                             '                                <div class="card-body">\n' +
-                            '                                    <h5 class="card-title">' + name + '</h5>\n' +
+                            '                                    <h5 class="card-title">' + name + ' <img src=' + favicon + '></h5>\n' +
                             '                                    <p class="card-text">Email: ' + email + '</p>\n' +
-                            '                                    <p class="card-text">Encrypted Password: ' + encyptedPassword + '</p>\n' +
+                            '                                    <p class="card-text">Encrypted Password: ' + encryptedPassword + '</p>\n' +
                             '                                    <button class="btn btn-primary">Copy to Clipboard</button>\n' +
                             '                                    <button class="btn btn-danger" onclick=confirmDeletePassword(' + msg.id + ')>Delete</button>\n' +
                             '                                </div>\n' +
