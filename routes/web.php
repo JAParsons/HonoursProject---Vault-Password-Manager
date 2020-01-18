@@ -84,4 +84,9 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         'uses' => 'AjaxController@postDeleteStoredPassword',
         'as' => 'postDeletePassword'
     ]);
+
+    Route::post('/postAjaxEditStoredPassword', [
+        'uses' => 'AjaxController@postEditStoredPassword',
+        'as' => 'postEditPassword'
+    ]);
 });

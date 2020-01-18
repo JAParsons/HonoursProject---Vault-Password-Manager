@@ -82,4 +82,35 @@ class AjaxController extends Controller
             'success' => $success
         ));
     }
+
+    function postEditStoredPassword(Request $request){
+        $success = false;
+        $user = Auth::user();
+
+        $storedPassword = StoredPassword::where('id', $request->id)->first();
+
+        //check if the stored password belongs to the user
+        if($storedPassword->user_token == $user->token){
+
+            //update account values
+            $storedPassword->email = $request->email;
+            $storedPassword->website_name = $request->name;
+            $storedPassword->website_url = $request->url;
+
+            //if the stored password has also been updated
+            if($request->newPassword && $request->iv){
+                $storedPassword->password = $request->newPassword;
+                $storedPassword->iv = $request->iv;
+            }
+        }
+
+        if ($storedPassword->save()){
+            $success = true;
+        }
+
+        return response()->
+        json($response = array(
+            'success' => $success
+        ));
+    }
 }

@@ -232,6 +232,7 @@
                                         <p class="card-text">Email:   {{$storedPassword->email}}</p>
                                         <p class="card-text">Encrypted Password:   {{$storedPassword->password}}</p>
                                     </div>
+                                    <input type="hidden" name="iv" value="{{$storedPassword->iv}}" id="{{$storedPassword->id}}IV">
                                     <br>
                                     <button class="btn btn-primary">Copy to Clipboard</button>
                                     <button class="btn btn-danger" onclick="confirmDeletePassword({{$storedPassword->id}})">Delete</button>
@@ -359,12 +360,17 @@
                                 <input type="email" class="form-control" id="editEmail">
                             </div>
                             <label for="password" class="col-form-label">Password:</label>
-                            <div class="input-group mb-3">
+                            <div class="input-group mb-3" id="encryptedPasswordInputBox">
                                 <input type="text" class="form-control" id="storedPassword" readonly>
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-success" type="button">Decrypt</button>
+                                    <button class="btn btn-outline-success" type="button" id="decryptButton">Decrypt</button>
                                 </div>
                             </div>
+                            <div class="input-group mb-3" id="decryptedPasswordInputBox" style="display: none">
+                                <input type="text" class="form-control" id="decryptedStoredPassword" readonly>
+                            </div>
+                            <br>
+                            <h5>Update Password</h5>
                             <div class="form-group">
                                 <label for="password" class="col-form-label">New Password:</label>
                                 <input type="password" class="form-control" id="newPasswordToStore">
@@ -377,7 +383,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-outline-primary" onclick="">Save Changes</button>
+                        <button type="button" class="btn btn-outline-primary" id="saveEditButton">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -407,7 +413,7 @@
         }
 
         function toggleModal(id, data = []){
-            if(id === 'editModal' && data){
+            if(id === 'editModal' && data.length > 0){
                 prepareEditModal(data);
             }
             $('#'+id).modal('toggle');
@@ -421,6 +427,7 @@
             let name = data[2];
             let email = data[3];
             let encryptedPassword = data[4];
+            let iv = document.getElementById(id + 'IV').value;
 
             //set form values
             document.getElementById('editUrl').value = url;
@@ -429,6 +436,28 @@
             document.getElementById('storedPassword').value = encryptedPassword;
 
             //set onclick event with data & id
+            document.getElementById('saveEditButton').setAttribute('onclick', 'postEditPassword(' + '"' + id + '"' + ')');
+
+            //set decrypt onclick event
+            document.getElementById('decryptButton').setAttribute('onclick', 'decryptPassword(' + '"' + iv + '"' + ')');
+
+            $('#encryptedPasswordInputBox').show();
+            $('#decryptedPasswordInputBox').hide();
+        }
+
+        //decrypt password on the view/edit modal
+        function decryptPassword(iv){
+            let encryptedPassword = document.getElementById('storedPassword').value;
+
+            //decrypt master key & password
+            let masterKey = aesDecrypt(encMaster, kek, masterIV);
+            let decryptedPassword = aesDecrypt(encryptedPassword, masterKey, iv);
+console.log('encPass ' + encryptedPassword);
+console.log('master ' + masterKey);
+console.log('pass ' + decryptedPassword);
+            document.getElementById('decryptedStoredPassword').value = decryptedPassword;
+            $('#encryptedPasswordInputBox').hide();
+            $('#decryptedPasswordInputBox').show();
         }
 
         //check if the user has entered their password or not
@@ -464,6 +493,14 @@
 
                     document.getElementById('password').value = '';
                 });
+        }
+
+        function toggleDiv(div) {
+            if (div.style.display === "none") {
+                div.style.display = "block";
+            } else {
+                div.style.display = "none";
+            }
         }
 
         function confirmDeletePassword(id){
@@ -516,6 +553,7 @@
                             '                                       <p class="card-text">Email: ' + email + '</p>\n' +
                             '                                       <p class="card-text">Encrypted Password: ' + encryptedPassword + '</p>\n' +
                             '                                   </div>\n' +
+                            '                               <input type="hidden" name="iv" value="' + passwordIV + '" id="' + msg.id + 'IV' + '">\n' +
                             '                               <br>\n' +
                             '                                       <button class="btn btn-primary">Copy to Clipboard</button>\n' +
                             '                                       <button class="btn btn-danger" onclick=confirmDeletePassword(' + msg.id + ')>Delete</button>\n' +
@@ -538,7 +576,6 @@
         }
 
         function postDeletePassword(id){
-
             $.ajax({
                 method: 'POST',
                 url: '{{route('postDeletePassword')}}',
@@ -551,6 +588,82 @@
                     if(msg.success){
                         $('#'+id).remove();
                         toggleModal('deleteModal');
+                    }
+                });
+        }
+
+        function postEditPassword(id){
+            //collect form values
+            let name = document.getElementById('editName').value;
+            let url = document.getElementById('editUrl').value;
+            let email = document.getElementById('editEmail').value;
+            let newPassword = document.getElementById('newPasswordToStore').value;
+            let confirmNewPassword = document.getElementById('confirmNewPasswordToStore').value;
+            let newEncryptedPassword = document.getElementById('storedPassword').value;
+            let iv = '';
+            var data = {};
+
+            //if password is changed
+            if(newPassword || confirmNewPassword){
+                if(newPassword === confirmNewPassword){
+                    //decrypt master key
+                    let masterKey = aesDecrypt(encMaster, kek, masterIV);
+                    iv = secrets.random(512);
+                    //encrypt updated password with master key
+                    newEncryptedPassword = aesEncrypt(newPassword, masterKey, iv);
+                    data = {id: id, name: name, url: url, email: email, newPassword: newEncryptedPassword, iv: iv, _token: '{{Session::token()}}'};
+                }
+                else {
+                    data = {id: id, name: name, url: url, email: email, _token: '{{Session::token()}}'};
+                    iv = document.getElementById(id+'IV').value;
+
+                    //todo error message
+                }
+
+                //document.getElementById('storedPassword').value = newEncryptedPassword;
+                document.getElementById('newPasswordToStore').value = '';
+                document.getElementById('confirmNewPasswordToStore').value ='';
+            }
+
+            $.ajax({
+                method: 'POST',
+                url: '{{route('postEditPassword')}}',
+                data: {id: id, name: name, url: url, email: email, newPassword: data.newPassword, iv: data.iv, _token: '{{Session::token()}}'}
+            })
+                .done(function (msg) {
+                    console.log(msg);
+
+                    if(msg.success){
+                        let favicon = 'https://www.google.com/s2/favicons?domain_url=' + url;
+                        let data = [id, url, name, email, newEncryptedPassword];
+                        data = data.map(function(x) { return x = "'" + x + "'"; });
+
+                        iv = iv ? iv : document.getElementById(id+'IV').value;
+
+                        //remove old password html & replace with the updated version
+                        $('#'+id).remove();
+                        $('#cardDeck').append(
+                            '                        <div class="d-flex p-1 pt-3" id=' + id + '>\n' +
+                            '                            <div class="card" style="max-width: 18rem; min-width: 18rem;">\n' +
+                            '                                <div class="card-body">\n' +
+                            '                                   <div class="clickableElement" onclick="openModal(\'editModal\',' + '[' + data + ']' + ')">\n' +
+                            '                                       <h5 class="card-title">' + name + ' <img src=' + favicon + '></h5>\n' +
+                            '                                       <p class="card-text">Email: ' + email + '</p>\n' +
+                            '                                       <p class="card-text">Encrypted Password: ' + newEncryptedPassword + '</p>\n' +
+                            '                                   </div>\n' +
+                            '                               <input type="hidden" name="iv" value="' + iv + '" id="' + id + 'IV' + '">\n' +
+                            '                               <br>\n' +
+                            '                                       <button class="btn btn-primary">Copy to Clipboard</button>\n' +
+                            '                                       <button class="btn btn-danger" onclick=confirmDeletePassword(' + id + ')>Delete</button>\n' +
+                            '                               </div>\n' +
+                            '                                <div class="card-footer clickableElement" onclick="openModal(\'editModal\',' + '[' + data + ']' + ')">\n' +
+                            '                                    <small class="text-muted">Last updated just now</small>\n' +
+                            '                                </div>\n' +
+                            '                            </div>\n' +
+                            '                        </div>'
+                        );
+
+                        toggleModal('editModal');
                     }
                 });
         }
