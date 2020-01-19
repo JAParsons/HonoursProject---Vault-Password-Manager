@@ -234,7 +234,7 @@
                                     </div>
                                     <input type="hidden" name="iv" value="{{$storedPassword->iv}}" id="{{$storedPassword->id}}IV">
                                     <br>
-                                    <button class="btn btn-primary">Copy to Clipboard</button>
+                                    <button class="btn btn-primary" onclick="decryptToClipboard('{{$storedPassword->id}}', '{{$storedPassword->iv}}', '{{$storedPassword->password}}')">Copy to Clipboard</button>
                                     <button class="btn btn-danger" onclick="confirmDeletePassword({{$storedPassword->id}})">Delete</button>
                                 </div>
                                 <div class="card-footer clickableElement" onclick="openModal('editModal', ['{{$storedPassword->id}}', '{{$storedPassword->website_url}}', '{{$storedPassword->website_name}}', '{{$storedPassword->email}}', '{{$storedPassword->password}}'])">
@@ -460,6 +460,41 @@ console.log('pass ' + decryptedPassword);
             $('#decryptedPasswordInputBox').show();
         }
 
+        function decryptToClipboard(id, iv, encPassword) {
+            let data = [id, iv, encPassword];
+
+            data = data.map(function(x) { return x = '"' + x + '"'; });
+
+            //if password has already been verified, decrypt and copy to clipboard
+            if (checkIfPassword()){
+                //decrypt master key & password
+                let masterKey = aesDecrypt(encMaster, kek, masterIV);
+                let decryptedPassword = aesDecrypt(encPassword, masterKey, iv);
+
+                copyToClipboard(decryptedPassword);
+            }
+            else{
+                //set onclick event to be the verify password function with the desired modal param as a 'special case'
+                document.getElementById('confirmPasswordButton').setAttribute('onclick', 'verifyPassword(' + '"clipboard"' + ',' + '[' + data + ']' + ')');
+
+                toggleModal('passwordModal');
+            }
+        }
+
+        //copy given decrypted password to the clipboard
+        function copyToClipboard(text){
+            var temp = document.createElement("textarea");
+            // to avoid breaking origin page when copying more words
+            // cant copy when adding below this code
+            // temp.style.display = 'none'
+            document.body.appendChild(temp);
+            //Be careful if you use textarea. setAttribute('value', value), which works with "input" does not work with "textarea"
+            temp.value = text;
+            temp.select();
+            document.execCommand("copy");
+            document.body.removeChild(temp);
+        }
+
         //check if the user has entered their password or not
         function checkIfPassword(){
             if(password){ return true; }
@@ -487,8 +522,15 @@ console.log('pass ' + decryptedPassword);
                         kek = pbkdf2(password, kekSalt);
                         //close password modal & open the requested one
                         toggleModal('passwordModal');
-                        data = data.map(String);
-                        toggleModal(desiredModal, data);
+
+                        //if copying to clipboard else open requested modal
+                        if(desiredModal === 'clipboard') {
+                            decryptToClipboard(data[0], data[1], data[2]);
+                        }
+                        else{
+                            data = data.map(String);
+                            toggleModal(desiredModal, data);
+                        }
                     }
 
                     document.getElementById('password').value = '';
@@ -555,7 +597,7 @@ console.log('pass ' + decryptedPassword);
                             '                                   </div>\n' +
                             '                               <input type="hidden" name="iv" value="' + passwordIV + '" id="' + msg.id + 'IV' + '">\n' +
                             '                               <br>\n' +
-                            '                                       <button class="btn btn-primary">Copy to Clipboard</button>\n' +
+                            '                                       <button class="btn btn-primary" onclick="decryptToClipboard(\'editModal\',' + "'" + passwordIV + "'" + ',' + "'" + encryptedPassword + "'" + ')">Copy to Clipboard</button>\n' +
                             '                                       <button class="btn btn-danger" onclick=confirmDeletePassword(' + msg.id + ')>Delete</button>\n' +
                             '                               </div>\n' +
                             '                                <div class="card-footer clickableElement" onclick="openModal(\'editModal\',' + '[' + data + ']' + ')">\n' +
@@ -653,7 +695,7 @@ console.log('pass ' + decryptedPassword);
                             '                                   </div>\n' +
                             '                               <input type="hidden" name="iv" value="' + iv + '" id="' + id + 'IV' + '">\n' +
                             '                               <br>\n' +
-                            '                                       <button class="btn btn-primary">Copy to Clipboard</button>\n' +
+                            '                                       <button class="btn btn-primary" onclick="decryptToClipboard(\'editModal\',' + "'" + iv + "'" + ',' + "'" + newEncryptedPassword + "'" + ')">Copy to Clipboard</button>\n' +
                             '                                       <button class="btn btn-danger" onclick=confirmDeletePassword(' + id + ')>Delete</button>\n' +
                             '                               </div>\n' +
                             '                                <div class="card-footer clickableElement" onclick="openModal(\'editModal\',' + '[' + data + ']' + ')">\n' +
