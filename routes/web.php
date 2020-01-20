@@ -51,6 +51,11 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => 'UserController@postLogin',
         'as' => 'login'
     ]);
+
+    Route::get('/logout',[
+        'uses' => 'UserController@getLogout',
+        'as' => 'logout'
+    ]);
 });
 
 //protected routes that require authorisation
@@ -68,5 +73,25 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/postAjaxVerifyPassword', [
         'uses' => 'AjaxController@postVerifyPassword',
         'as' => 'verify'
+    ]);
+
+    Route::post('/postAjaxMasterHash', [
+        'uses' => 'AjaxController@postMasterHash',
+        'as' => 'postMasterHash'
+    ]);
+
+    Route::post('/postAjaxAddStoredPassword', [
+        'uses' => 'AjaxController@postAddStoredPassword',
+        'as' => 'postAddPassword'
+    ]);
+
+    Route::post('/postAjaxDeleteStoredPassword', [
+        'uses' => 'AjaxController@postDeleteStoredPassword',
+        'as' => 'postDeletePassword'
+    ]);
+
+    Route::post('/postAjaxEditStoredPassword', [
+        'uses' => 'AjaxController@postEditStoredPassword',
+        'as' => 'postEditPassword'
     ]);
 });

@@ -25,7 +25,7 @@ class UserController extends Controller
         $user->password = $password;
         $user->master_key = $masterKey;
         $user->master_iv = $masterIV;
-        $user->token = substr(sha1(time()), 0, 32); //generate token for ID purposes
+        $user->token = substr(sha1(time()), 0, 16); //generate token for ID purposes
         $user->kek_salt = $kekSalt;
         $user->master_hash = $masterHash;
 
@@ -47,5 +47,12 @@ class UserController extends Controller
     public function getDashboard()
     {
         return view('dashboard');
+    }
+
+    //log user out & redirect
+    public function getLogout()
+    {
+        Auth::logout();
+        return redirect()->route('login');
     }
 }
