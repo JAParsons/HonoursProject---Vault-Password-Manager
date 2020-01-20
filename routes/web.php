@@ -51,6 +51,11 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => 'UserController@postLogin',
         'as' => 'login'
     ]);
+
+    Route::get('/logout',[
+        'uses' => 'UserController@getLogout',
+        'as' => 'logout'
+    ]);
 });
 
 //protected routes that require authorisation

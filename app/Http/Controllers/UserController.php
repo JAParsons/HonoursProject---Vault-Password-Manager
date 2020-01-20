@@ -48,4 +48,11 @@ class UserController extends Controller
     {
         return view('dashboard');
     }
+
+    //log user out & redirect
+    public function getLogout()
+    {
+        Auth::logout();
+        return redirect()->route('login');
+    }
 }
