@@ -16,7 +16,7 @@
         background: linear-gradient(to bottom right, #4377f1, #5267f4, #5f57f8, #654ff9, #7042fc, #7c35ff);
         color: #FFF;
         text-align: center;
-        overflow: hidden;
+        /*overflow: hidden;*/
     }
     .curved-div svg {
         display: block;
@@ -82,7 +82,7 @@
                         <li class="nav-item active">
                             <a class="nav-link" href="#top">Recover <span class="sr-only">(current)</span></a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item active">
                             <a class="nav-link" href="{{route('login')}}">Login <span class="sr-only">(current)</span></a>
                         </li>
                     @endif

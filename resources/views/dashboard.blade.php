@@ -105,7 +105,7 @@
     </nav><!-- NavBar END -->
 
     <!-- Bootstrap row -->
-    <div class="row" id="body-row">
+    <div class="row content" id="body-row">
         <!-- Sidebar -->
         <div id="sidebar-container" class="sidebar-expanded d-none d-md-block">
             <!-- d-* hiddens the Sidebar in smaller devices. Its itens can be kept on the Navbar 'Menu' -->

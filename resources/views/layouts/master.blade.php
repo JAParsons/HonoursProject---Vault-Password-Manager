@@ -20,16 +20,30 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
-<body>
+<body id="page-container">
 
 
 
 {{--    <div class="container-fluid">--}}
         @yield('content')
 {{--    </div>--}}
+<style>
+    html, body {
+        height: 100%;
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    .content {
+        flex: 1 0 auto;
+    }
+    .footer {
+        flex-shrink: 0;
+    }
+</style>
 
-</body>
-<footer class="container py-5 border-top">
+<footer class="container py-5 border-top footer" style="">
     <br>
     <div class="row">
         <div class="col-12 col-md">
@@ -76,4 +90,6 @@
         </div>
     </div>
 </footer>
+</body>
+
 </html>
