@@ -39,6 +39,10 @@ Route::get('/login', function () {
     return view('login');
 });
 
+Route::get('/landing', function () {
+    return view('landingPage');
+});
+
 
 //standard route group
 Route::group(['middleware' => ['web']], function () {

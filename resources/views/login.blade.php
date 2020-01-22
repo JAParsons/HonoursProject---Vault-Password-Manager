@@ -10,9 +10,39 @@
     <script src={{asset('js/crypto-js.js')}}></script> {{--core crypto library--}}
     <script src={{asset('js/pbkdf2.js')}}></script> {{--pbkdf2 implementation--}}
 
-    <br><br><br><br><br><br><br><br><br>
+    <!-- Bootstrap NavBar -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="{{URL::to('landing')}}">
+            <img src="images/favicon/favicon-32x32.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            <span class="menu-collapsed">Vault Password Manager</span>
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ml-auto">
+                @if(Auth::User())
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{route('dashboard')}}">My Vault <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item" style="padding-left: 5px">
+                        <button class="btn btn-danger my-2 my-sm-0" onclick="location.href = '{{route('logout')}}'">Logout</button>
+                    </li>
+                @else
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#top">Recover <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{route('login')}}">Login <span class="sr-only">(current)</span></a>
+                    </li>
+                @endif
+            </ul>
+        </div>
+    </nav><!-- NavBar END -->
 
-    <div class="container">
+    <br><br><br><br><br><br><br>
+
+    <div class="container content">
         <div class="row">
             <div class="col-md-5">
                 <h3>Login</h3>
@@ -25,7 +55,7 @@
                         <label for="password">Password</label>
                         <input class="form-control" type="password" name="password" id="password">
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-outline-primary">Submit</button>
                     <input type="hidden" name="_token" value="{{Session::token()}}"> <?php //protection against CSRF by fetching session token?>
                 </form>
             </div>
@@ -45,7 +75,7 @@
                         <label for="password">Password</label>
                         <input class="form-control form-control {{$errors->has('password') ? 'is-invalid' : ''}}" type="password" name="reg_password" id="reg_password" value="">
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-outline-primary">Submit</button>
                     <input type="hidden" name="enc_master_key" value="something" id="enc_master_key">
                     <input type="hidden" name="master_iv" value="something" id="master_iv">
                     <input type="hidden" name="kek_salt" value="something" id="kek_salt">
@@ -54,6 +84,7 @@
                 </form>
             </div>
         </div>
+        <br>
     </div>
 
     <script>
