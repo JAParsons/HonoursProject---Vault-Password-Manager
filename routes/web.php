@@ -43,6 +43,15 @@ Route::get('/landing', function () {
     return view('landingPage');
 });
 
+Route::get('/recover', function () {
+    return view('recover');
+});
+
+Route::post('/postRecoveryLogin', [
+    'uses' => 'AjaxController@postRecoveryLogin',
+    'as' => 'recoveryLogin'
+]);
+
 
 //standard route group
 Route::group(['middleware' => ['web']], function () {
@@ -97,5 +106,10 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/postAjaxEditStoredPassword', [
         'uses' => 'AjaxController@postEditStoredPassword',
         'as' => 'postEditPassword'
+    ]);
+
+    Route::post('/postAjaxChangeAccountPassword', [
+        'uses' => 'AjaxController@postChangeAccountPassword',
+        'as' => 'postChangePassword'
     ]);
 });

@@ -6,6 +6,7 @@ use App\StoredPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\User;
 
 class AjaxController extends Controller
 {
@@ -24,6 +25,48 @@ class AjaxController extends Controller
                 'success' => $success,
                 'msg' => $request->password,
             ));
+    }
+
+    public function postChangeAccountPassword(Request $request){
+        $success = false;
+        $user = Auth::user();
+        $password = bcrypt($request->password);
+        $masterKey = $request->master;
+        //$masterHash = bcrypt($request->hash);
+
+        $user->password = $password;
+        $user->master_key = $masterKey;
+        //$user->master_hash = $masterHash;
+
+        if ($user->save()){
+            $success = true;
+        }
+
+        return response()->
+        json($response = array(
+            'success' => $success,
+            'user' => $user,
+        ));
+    }
+
+    //authenticate recovery login via master hash
+    public function postRecoveryLogin(Request $request)
+    {
+        $success = false;
+        $salt = '';
+        $user = User::where(['token' => $request->token])->first();
+
+        if (Hash::check($request->masterHash, $user->master_hash)){
+            Auth::login($user);
+            $salt = $user->master_salt;
+            $success = true;
+        }
+
+        return response()->
+        json($response = array(
+            'success' => $success,
+            'user' => $user,
+        ));
     }
 
     //post the generated master hash
