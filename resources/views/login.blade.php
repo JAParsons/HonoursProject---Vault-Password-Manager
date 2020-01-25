@@ -30,10 +30,10 @@
                     </li>
                 @else
                     <li class="nav-item active">
-                        <a class="nav-link" href="#top">Recover <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="{{URL::to('/recover')}}">Recover <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="{{route('login')}}">Login <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="{{URL::to('/login')}}">Login <span class="sr-only">(current)</span></a>
                     </li>
                 @endif
             </ul>
@@ -100,20 +100,19 @@
             var derivedKey = deriveKey(password);
             console.log('plain password: ' + document.getElementById("reg_password").value);
 
-            //hash master with email as salt
-            // document.getElementById("master_hash").value = pbkdf2(masterKey, email);
-            // console.log('salt form value: ' + document.getElementById("kek_salt").value);
+            //hash master with (hashed) fixed string as salt
+            document.getElementById("master_hash").value = pbkdf2(masterKey, CryptoJS.SHA256('masterkey'));
 
             //hash the entered email address
             document.getElementById("reg_password").value = pbkdf2(password, email);
             console.log("Hashed Password: " + document.getElementById("reg_password").value);
 
             //encrypt the master key with the derived KEK
-            var encyptedMaster = aesEncrypt(masterKey, derivedKey, masterIV);
+            var encryptedMaster = aesEncrypt(masterKey, derivedKey, masterIV);
 
             //set hidden form values
             document.getElementById("master_iv").value = masterIV;
-            document.getElementById("enc_master_key").value = encyptedMaster;
+            document.getElementById("enc_master_key").value = encryptedMaster;
 
             console.log("Master Key: " + masterKey);
             console.log("KEK: " + derivedKey);

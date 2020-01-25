@@ -438,6 +438,7 @@
             //decrypt master key & password
             let masterKey = aesDecrypt(encMaster, kek, masterIV);
             let decryptedPassword = aesDecrypt(encryptedPassword, masterKey, iv);
+console.log('kek: ' + kek);
 console.log('encPass ' + encryptedPassword);
 console.log('master ' + masterKey);
 console.log('pass ' + decryptedPassword);
@@ -532,7 +533,6 @@ console.log('pass ' + decryptedPassword);
         }
 
         function confirmDeletePassword(id){
-
             //add delete event to confirm button
             document.getElementById('confirm').setAttribute('onclick', 'postDeletePassword(' + id + ')');
             toggleModal('deleteModal');

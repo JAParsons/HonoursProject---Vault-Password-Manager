@@ -80,10 +80,10 @@
                         </li>
                     @else
                         <li class="nav-item active">
-                            <a class="nav-link" href="#top">Recover <span class="sr-only">(current)</span></a>
+                            <a class="nav-link" href="{{URL::to('/recover')}}">Recover <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link" href="{{route('login')}}">Login <span class="sr-only">(current)</span></a>
+                            <a class="nav-link" href="{{URL::to('/login')}}">Login <span class="sr-only">(current)</span></a>
                         </li>
                     @endif
                 </ul>

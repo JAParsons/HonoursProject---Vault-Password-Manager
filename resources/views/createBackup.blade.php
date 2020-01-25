@@ -21,7 +21,7 @@
 
     <br>
 
-    <div class="container">
+    <div class="container content">
         <div class="row d-flex justify-content-center">
             <div>
                 <div class="d-flex p-2" id="qrcode0"></div>
@@ -64,23 +64,26 @@
             //derive kek
             var kek = pbkdf2(password, kekSalt);
             console.log('kek: ' + kek);
+            console.log('kek salt: ' + kekSalt);
 
             //decrypt master key
             var masterKey = aesDecrypt(encMaster, kek, masterIV);
             console.log('master: ' + masterKey);
+            console.log('master IV: ' + masterIV);
 
             //generate salt and compute master hash
-            var masterSalt = secrets.random(128);
+            var masterSalt = CryptoJS.SHA256('masterkey');
             var masterHash = pbkdf2(masterKey, masterSalt);
 
             console.log('master salt: ' + masterSalt);
             console.log('master hash: ' + masterHash);
 
             //write master hash to db
-            postMasterHash(masterHash, masterSalt);
+            postMasterHash(masterHash);
 
             //concat strings to store in QR code
-            var data = token + masterKey + masterSalt;
+            //var data = token + masterKey + masterSalt;
+            let data = token + masterKey;
 
             //generate QR code backups
             genShamir(data, 3, 2);
@@ -117,14 +120,19 @@
 
     <script>
         function genShamir(text, fragments, threshold){
+            console.log('text: ' + text);
+            //text = secrets.str2hex(text); //problems here
+            console.log('converted: ' + text);
             // split into 3 shares, with a threshold of 2, text must be hex
             shares = secrets.share(text, fragments, threshold); //needs hex input hence compression or JSON would inflate the size - best solution is to concatenate the 3 existing hex components
             console.log(shares);
 
-            for(i=0; i<shares.length; i++){
-                shares[i] = shares[i];
-                console.log(shares[i]);
-            }
+            console.log(secrets.combine(shares));
+
+            // for(i=0; i<shares.length; i++){
+            //     shares[i] = btoa(shares[i]);
+            //     console.log(shares[i]);
+            // }
         }
 
         function createQrCode(divId, text){
