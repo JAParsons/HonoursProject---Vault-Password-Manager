@@ -154,9 +154,10 @@
         //events for the login password input box
         $("#password").
         on("blur", function () {
-            var email = document.getElementById("email").value;
-            var password = document.getElementById("password").value;
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
             document.getElementById("password").value = pbkdf2(password, email);
+            console.log(document.getElementById("password").value);
         });
     </script>
 @endsection

@@ -12,6 +12,11 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src={{asset('js/jQuery.js')}}></script>
+    <script src={{asset('js/notify.js')}}></script>
+
+    <!-- TRYING TO GET PRELOADER TO WORK -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 
@@ -41,7 +46,39 @@
     .footer {
         flex-shrink: 0;
     }
+
+    /*loader css*/
+    .no-js #loader { display: none; }
+    .js #loader { display: block; position: absolute; left: 100px; top: 0; }
+    .se-pre-con {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        {{--background: url({{asset('images/lock_transparent.gif')}}) center no-repeat #fff;--}}
+        background: url({{asset('images/favicon/android-chrome-192x192.png')}}) center no-repeat #fff;
+    }
 </style>
+
+<script>
+    function notify(message = 'notification', type = 'success') {
+        $.notify.defaults({ className: type });
+        $.notify(
+            message,
+            { globalPosition:"top center" }
+        );
+    }
+</script>
+
+<script>
+    // Wait for window load
+    $(window).load(function() {
+        // Animate loader off screen
+        $(".se-pre-con").fadeOut("slow");
+    });
+</script>
 
 <footer class="container py-5 border-top footer" style="">
     <br>
@@ -85,5 +122,7 @@
     </div>
 </footer>
 </body>
+
+<div class="se-pre-con"></div>
 
 </html>

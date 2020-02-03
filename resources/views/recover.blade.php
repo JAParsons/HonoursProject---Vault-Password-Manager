@@ -194,6 +194,8 @@ console.log('HERE: ' + aesDecrypt(newEncryptedMaster, newKek, masterIV));
                         kekSalt = msg.user.kek_salt;
                         masterIV = msg.user.master_iv;
                         email = msg.user.email;
+
+                        notify('Login Successful', 'success');
                     }
                 });
         }

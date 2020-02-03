@@ -480,6 +480,8 @@ console.log('pass ' + decryptedPassword);
             temp.select();
             document.execCommand("copy");
             document.body.removeChild(temp);
+
+            notify('Copied to clipboard', 'success');
         }
 
         //check if the user has entered their password or not
@@ -593,6 +595,8 @@ console.log('pass ' + decryptedPassword);
                             '                        </div>'
                         );
 
+                        notify('Password Added', 'success');
+
                         //clear form values
                         document.getElementById('name').value = '';
                         document.getElementById('url').value = '';
@@ -616,6 +620,7 @@ console.log('pass ' + decryptedPassword);
                     if(msg.success){
                         $('#'+id).remove();
                         toggleModal('deleteModal');
+                        notify('Password Deleted', 'success');
                     }
                 });
         }
@@ -692,6 +697,7 @@ console.log('pass ' + decryptedPassword);
                         );
 
                         toggleModal('editModal');
+                        notify('Password Updated', 'success');
                     }
                 });
         }
