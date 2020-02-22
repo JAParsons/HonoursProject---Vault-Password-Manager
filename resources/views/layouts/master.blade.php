@@ -19,6 +19,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
 
     <script src={{asset('js/notify.js')}}></script>
+    <script src={{asset('js/jquery.loading.js')}}></script>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 
@@ -54,8 +55,8 @@
     .js #loader { display: block; position: absolute; left: 100px; top: 0; }
     .se-pre-con {
         position: fixed;
-        left: 0px;
-        top: 0px;
+        left: 0;
+        top: 0;
         width: 100%;
         height: 100%;
         z-index: 9999;
@@ -63,6 +64,10 @@
         background: url({{asset('images/favicon/android-chrome-192x192.png')}}) center no-repeat #fff;
     }
 </style>
+
+<div id="custom">
+    custom
+</div>
 
 <script>
     function notify(message = 'notification', type = 'success') {
@@ -72,12 +77,22 @@
             { globalPosition:"top center" }
         );
     }
+
+    function toggleLoading(id = 'page-container', message = 'Loading...'){
+        if($('#' + id).is(':loading')){
+            $('#' + id).loading('toggle');
+        }
+        else{
+            $('#' + id).loading({theme: 'dark', message: message});
+            document.getElementById(id + '_loading-overlay').style.zIndex = "9999"; //bring loading overlay in front of bootstrap modal
+        }
+    }
 </script>
 
 <script>
-    // Wait for window load
+    //wait for window load
     $(window).load(function() {
-        // Animate loader off screen
+        //animate loader off screen
         $(".se-pre-con").fadeOut("slow");
     });
 </script>

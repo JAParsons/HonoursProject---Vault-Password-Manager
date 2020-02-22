@@ -521,9 +521,15 @@ console.log('pass ' + decryptedPassword);
                             toggleModal(desiredModal, data);
                         }
                     }
+                    else{ //if unsuccessful, display error
+                        notify(msg.msg, 'error');
+                    }
 
                     document.getElementById('password').value = '';
+                    toggleLoading();
                 });
+
+            toggleLoading();
         }
 
         function toggleDiv(div) {
@@ -604,7 +610,12 @@ console.log('pass ' + decryptedPassword);
                         document.getElementById('passwordToStore').value = '';
                         document.getElementById('confirmPasswordToStore').value = '';
                     }
+                    else{ //if unsuccessful, display error
+                        notify(msg.msg, 'error');
+                    }
+                    toggleLoading();
                 });
+            toggleLoading();
         }
 
         function postDeletePassword(id){
@@ -622,7 +633,12 @@ console.log('pass ' + decryptedPassword);
                         toggleModal('deleteModal');
                         notify('Password Deleted', 'success');
                     }
+                    else{ //if unsuccessful, display error
+                        notify(msg.msg, 'error');
+                    }
+                    toggleLoading();
                 });
+            toggleLoading();
         }
 
         function postEditPassword(id){
@@ -699,7 +715,12 @@ console.log('pass ' + decryptedPassword);
                         toggleModal('editModal');
                         notify('Password Updated', 'success');
                     }
+                    else{ //if unsuccessful, display error
+                        notify(msg.msg, 'error');
+                    }
+                    toggleLoading();
                 });
+            toggleLoading();
         }
 
         //hash password or derive key
