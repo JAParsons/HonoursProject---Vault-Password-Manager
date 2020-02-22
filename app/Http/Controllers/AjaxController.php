@@ -116,7 +116,8 @@ class AjaxController extends Controller
         return response()->
         json($response = array(
             'success' => $success,
-            'msg' => $msg
+            'msg' => $msg,
+            'id' => $storedPassword->id
         ));
     }
 

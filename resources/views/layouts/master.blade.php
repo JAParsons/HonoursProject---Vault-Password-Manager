@@ -20,6 +20,8 @@
 
     <script src={{asset('js/notify.js')}}></script>
     <script src={{asset('js/jquery.loading.js')}}></script>
+    <script src={{asset('js/waitMe.js')}}></script>
+    <link rel="stylesheet" href={{asset('css/waitMe.css')}}>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 
@@ -65,10 +67,6 @@
     }
 </style>
 
-<div id="custom">
-    custom
-</div>
-
 <script>
     function notify(message = 'notification', type = 'success') {
         $.notify.defaults({ className: type });
@@ -78,13 +76,36 @@
         );
     }
 
-    function toggleLoading(id = 'page-container', message = 'Loading...'){
-        if($('#' + id).is(':loading')){
-            $('#' + id).loading('toggle');
+    // function toggleLoading(id = 'page-container', message = 'Loading...'){
+    //     // if($('#' + id).is(':loading')){
+    //     //     $('#' + id).loading('toggle');
+    //     // }
+    //     // else{ //else create new loader instance
+    //         $('#' + id).loading({theme: 'dark', message: message, overlay: $("#custom")});
+    //         document.getElementById(id + '_loading-overlay').style.zIndex = "9999"; //bring loading overlay in front of bootstrap modal
+    //     //}
+    // }
+    function closeWaitMeLoader() {
+        $('#page-container').removeClass('waitMe_container');
+    }
+
+    function toggleLoading(id = 'page-container', message = 'One moment...'){
+        if(!$('#page-container').hasClass('waitMe_container')){
+            $('#page-container').waitMe({
+                effect : 'win8',
+                text : message,
+                bg : 'rgba(0,0,0,0.5)',
+                color : '#fff',
+                maxSize : '',
+                waitTime : -1,
+                textPos : 'vertical',
+                fontSize : '20px',
+                source : '',
+                onClose : function() {}
+            });
         }
         else{
-            $('#' + id).loading({theme: 'dark', message: message});
-            document.getElementById(id + '_loading-overlay').style.zIndex = "9999"; //bring loading overlay in front of bootstrap modal
+            closeWaitMeLoader();
         }
     }
 </script>
