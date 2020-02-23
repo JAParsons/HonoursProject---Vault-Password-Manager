@@ -480,6 +480,8 @@ console.log('pass ' + decryptedPassword);
             temp.select();
             document.execCommand("copy");
             document.body.removeChild(temp);
+
+            notify('Copied to clipboard', 'success');
         }
 
         //check if the user has entered their password or not
@@ -519,9 +521,15 @@ console.log('pass ' + decryptedPassword);
                             toggleModal(desiredModal, data);
                         }
                     }
+                    else{ //if unsuccessful, display error
+                        notify(msg.msg, 'error');
+                    }
 
                     document.getElementById('password').value = '';
+                    toggleLoading();
                 });
+
+            toggleLoading();
         }
 
         function toggleDiv(div) {
@@ -593,6 +601,8 @@ console.log('pass ' + decryptedPassword);
                             '                        </div>'
                         );
 
+                        notify('Password Added', 'success');
+
                         //clear form values
                         document.getElementById('name').value = '';
                         document.getElementById('url').value = '';
@@ -600,7 +610,12 @@ console.log('pass ' + decryptedPassword);
                         document.getElementById('passwordToStore').value = '';
                         document.getElementById('confirmPasswordToStore').value = '';
                     }
+                    else{ //if unsuccessful, display error
+                        notify(msg.msg, 'error');
+                    }
+                    toggleLoading();
                 });
+            toggleLoading();
         }
 
         function postDeletePassword(id){
@@ -616,8 +631,14 @@ console.log('pass ' + decryptedPassword);
                     if(msg.success){
                         $('#'+id).remove();
                         toggleModal('deleteModal');
+                        notify('Password Deleted', 'success');
                     }
+                    else{ //if unsuccessful, display error
+                        notify(msg.msg, 'error');
+                    }
+                    toggleLoading();
                 });
+            toggleLoading();
         }
 
         function postEditPassword(id){
@@ -692,8 +713,14 @@ console.log('pass ' + decryptedPassword);
                         );
 
                         toggleModal('editModal');
+                        notify('Password Updated', 'success');
                     }
+                    else{ //if unsuccessful, display error
+                        notify(msg.msg, 'error');
+                    }
+                    toggleLoading();
                 });
+            toggleLoading();
         }
 
         //hash password or derive key

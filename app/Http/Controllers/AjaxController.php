@@ -14,16 +14,20 @@ class AjaxController extends Controller
     public function postVerifyPassword(Request $request)
     {
         $success = false;
+        $msg = '';
         $user = Auth::user();
 
         if (Hash::check($request->password, $user->password)){
             $success = true;
         }
+        else{
+            $msg = 'Incorrect Password';
+        }
 
         return response()->
             json($response = array(
                 'success' => $success,
-                'msg' => $request->password,
+                'msg' => $msg,
             ));
     }
 
@@ -90,6 +94,7 @@ class AjaxController extends Controller
 
     function postAddStoredPassword(Request $request){
         $success = false;
+        $msg = '';
         $user = Auth::user();
 
         $storedPassword = new StoredPassword();
@@ -104,30 +109,40 @@ class AjaxController extends Controller
         if ($storedPassword->save()){
             $success = true;
         }
+        else{
+            $msg = 'Unexpected error occurred, please try again';
+        }
 
         return response()->
         json($response = array(
             'success' => $success,
+            'msg' => $msg,
             'id' => $storedPassword->id
         ));
     }
 
     function postDeleteStoredPassword(Request $request){
         $success = false;
+        $msg = '';
         $user = Auth::user();
 
         if (StoredPassword::where(['id' => $request->id, 'user_token' => $user->token])->delete()){
             $success = true;
         }
+        else{
+            $msg = 'Unexpected error occurred, please try again';
+        }
 
         return response()->
         json($response = array(
-            'success' => $success
+            'success' => $success,
+            'msg' => $msg
         ));
     }
 
     function postEditStoredPassword(Request $request){
         $success = false;
+        $msg = 'Unexpected error occurred, please try again';
         $user = Auth::user();
 
         $storedPassword = StoredPassword::where('id', $request->id)->first();
@@ -146,14 +161,21 @@ class AjaxController extends Controller
                 $storedPassword->iv = $request->iv;
             }
         }
+        else{
+            $msg = "You don't have permission to do this";
+        }
 
         if ($storedPassword->save()){
             $success = true;
         }
+        else{
+            $msg = 'Unexpected error occurred, please try again';
+        }
 
         return response()->
         json($response = array(
-            'success' => $success
+            'success' => $success,
+            'msg' => $msg
         ));
     }
 }
