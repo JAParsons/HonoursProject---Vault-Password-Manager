@@ -108,6 +108,25 @@
             closeWaitMeLoader();
         }
     }
+
+    function toggleDiv(div) {
+        div = document.getElementById(div);
+        if (div.style.display === "none") {
+            div.style.display = "block";
+        } else {
+            div.style.display = "none";
+        }
+    }
+
+    function hideDiv(div) {
+        div = document.getElementById(div);
+        div.style.display = "none";
+    }
+
+    function showDiv(div) {
+        div = document.getElementById(div);
+        div.style.display = "block";
+    }
 </script>
 
 <script>

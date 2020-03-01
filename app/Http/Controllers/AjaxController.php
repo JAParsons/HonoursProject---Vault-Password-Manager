@@ -77,6 +77,7 @@ class AjaxController extends Controller
     public function postMasterHash(Request $request)
     {
         $success = false;
+        $msg = '';
         $user = Auth::user();
 
         $user->master_hash = bcrypt($request->masterHash);
@@ -84,11 +85,14 @@ class AjaxController extends Controller
         if ($user->save()){
             $success = true;
         }
+        else{
+            $msg = 'Unexpected error occurred, please try again';
+        }
 
         return response()->
         json($response = array(
             'success' => $success,
-            'msg' => $request->masterHash
+            'msg' => $msg
         ));
     }
 
