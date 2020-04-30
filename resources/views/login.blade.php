@@ -29,11 +29,11 @@
                         <button class="btn btn-danger my-2 my-sm-0" onclick="location.href = '{{route('logout')}}'">Logout</button>
                     </li>
                 @else
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{URL::to('/recover')}}">Recover <span class="sr-only">(current)</span></a>
+                    <li class="nav-item" style="padding-left: 5px">
+                        <button class="btn btn-warning my-2 my-sm-0" onclick="location.href = '{{URL::to('/recover')}}'">Recover</button>
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{URL::to('/login')}}">Login <span class="sr-only">(current)</span></a>
+                    <li class="nav-item" style="padding-left: 5px">
+                        <button class="btn btn-light my-2 my-sm-0" onclick="location.href = '{{URL::to('/login')}}'">Login</button>
                     </li>
                 @endif
             </ul>
@@ -55,7 +55,7 @@
                         <label for="password">Password</label>
                         <input class="form-control" type="password" name="password" id="password">
                     </div>
-                    <button type="submit" class="btn btn-outline-primary">Submit</button>
+                    <button type="submit" class="btn btn-outline-primary pull-right">Submit</button>
                     <input type="hidden" name="_token" value="{{Session::token()}}"> <?php //protection against CSRF by fetching session token?>
                 </form>
             </div>
@@ -75,7 +75,7 @@
                         <label for="password">Password</label>
                         <input class="form-control form-control {{$errors->has('password') ? 'is-invalid' : ''}}" type="password" name="reg_password" id="reg_password" value="">
                     </div>
-                    <button type="submit" class="btn btn-outline-primary">Submit</button>
+                    <button type="submit" class="btn btn-outline-primary pull-right">Submit</button>
                     <input type="hidden" name="enc_master_key" value="something" id="enc_master_key">
                     <input type="hidden" name="master_iv" value="something" id="master_iv">
                     <input type="hidden" name="kek_salt" value="something" id="kek_salt">

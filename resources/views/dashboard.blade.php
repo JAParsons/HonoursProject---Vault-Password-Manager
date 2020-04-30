@@ -94,8 +94,8 @@
         </a>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{route('dashboard')}}">My Vault <span class="sr-only">(current)</span></a>
+                <li class="nav-item" style="padding-left: 5px">
+                    <button class="btn btn-warning my-2 my-sm-0" onclick="location.href = '{{route('dashboard')}}'">My Vault</button>
                 </li>
                 <li class="nav-item" style="padding-left: 5px">
                     <button class="btn btn-danger my-2 my-sm-0" onclick="location.href = '{{route('logout')}}'">Logout</button>
@@ -118,37 +118,17 @@
                 <!-- /END Separator -->
                 <!-- Menu with submenu -->
                 <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-start align-items-center">
+                    <div class="d-flex w-100 justify-content-start align-items-center" onclick="toggleContent('dashboardContent')">
                         <span class="fa fa-dashboard fa-fw mr-3"></span>
                         <span class="menu-collapsed">DASHBOARD</span>
-                        <span class="submenu-icon ml-auto"></span>
                     </div>
                 </a>
-                <!-- Submenu content -->
-                <div id='submenu1' class="collapse sidebar-submenu">
-                    <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Stored Passwords</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Reports</span>
-                    </a>
-                </div>
                 <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-start align-items-center">
+                    <div class="d-flex w-100 justify-content-start align-items-center" onclick="toggleContent('profileContent')">
                         <span class="fa fa-user fa-fw mr-3"></span>
                         <span class="menu-collapsed">PROFILE</span>
-                        <span class="submenu-icon ml-auto"></span>
                     </div>
                 </a>
-                <!-- Submenu content -->
-                <div id='submenu2' class="collapse sidebar-submenu">
-                    <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Edit Details</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
-                        <span class="menu-collapsed">Account Password</span>
-                    </a>
-                </div>
                 <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-start align-items-center">
                         <span class="fa fa-qrcode fa-fw mr-3"></span>
@@ -158,39 +138,49 @@
                 </a>
                 <!-- Submenu content -->
                 <div id='submenu3' class="collapse sidebar-submenu">
-                    <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+                    <a href="#" class="list-group-item list-group-item-action bg-dark text-white" onclick="toggleContent('backupContent')">
                         <span class="menu-collapsed">Generate Backup</span>
                     </a>
+                    <a href="#" class="list-group-item list-group-item-action bg-dark text-white" onclick="toggleContent('validateQRContent')">
+                        <span class="menu-collapsed">Validate QR Code</span>
+                    </a>
                 </div>
-                <!-- Separator with title -->
-                <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-                    <small>OPTIONS</small>
-                </li>
-                <!-- /END Separator -->
-                <li>
-                    <a href="#" class="bg-dark list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-start align-items-center">
-                            <span class="fa fa-envelope-o fa-fw mr-3"></span>
-                            <span class="menu-collapsed">NOTIFICATIONS <span class="badge badge-pill badge-primary ml-2">5</span></span>
-                        </div>
-                    </a>
-                    <a href="#" class="bg-dark list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-start align-items-center">
-                            <span class="fa fa-wrench fa-fw mr-3"></span>
-                            <span class="menu-collapsed">SETTINGS</span>
-                        </div>
-                    </a>
-                </li>
+{{--                <!-- Separator with title -->--}}
+{{--                <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">--}}
+{{--                    <small>OPTIONS</small>--}}
+{{--                </li>--}}
+{{--                <!-- /END Separator -->--}}
+{{--                <li>--}}
+{{--                    <a href="#" class="bg-dark list-group-item list-group-item-action">--}}
+{{--                        <div class="d-flex w-100 justify-content-start align-items-center">--}}
+{{--                            <span class="fa fa-wrench fa-fw mr-3"></span>--}}
+{{--                            <span class="menu-collapsed">SETTINGS</span>--}}
+{{--                        </div>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
                 <!-- Separator without title -->
                 <li class="list-group-item sidebar-separator menu-collapsed"></li>
                 <!-- /END Separator -->
                 <li>
-                    <a href="#" class="bg-dark list-group-item list-group-item-action">
+                    <a href="#submenu4" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-start align-items-center">
                             <span class="fa fa-question fa-fw mr-3"></span>
                             <span class="menu-collapsed">HELP</span>
+                            <span class="submenu-icon ml-auto"></span>
                         </div>
                     </a>
+                    <!-- Submenu content -->
+                    <div id='submenu4' class="collapse sidebar-submenu">
+                        <a href="#" class="list-group-item list-group-item-action bg-dark text-white" onclick="toggleContent('guideContent')">
+                            <span class="menu-collapsed">Guides</span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action bg-dark text-white" onclick="toggleContent('faqContent')">
+                            <span class="menu-collapsed">FAQ</span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action bg-dark text-white" onclick="toggleContent('aboutContent')">
+                            <span class="menu-collapsed">About</span>
+                        </a>
+                    </div>
                     <a href="#top" data-toggle="sidebar-colapse" class="bg-dark list-group-item list-group-item-action d-flex align-items-center">
                         <div class="d-flex w-100 justify-content-start align-items-center">
                             <span id="collapse-icon" class="fa fa-2x mr-3"></span>
@@ -201,8 +191,8 @@
             </ul><!-- List Group END-->
         </div><!-- sidebar-container END -->
 
-        <!-- MAIN -->
-        <div class="col p-4">
+        <!-- Dashboard content -->
+        <div class="col p-4" id="dashboardContent">
             <h1 class="display-4 text-center">Password Dashboard</h1>
             <br>
             <div class="d-flex pl-1">
@@ -230,7 +220,49 @@
                         </div>
                     @endforeach
                 </div>
-        </div><!-- Main Col END -->
+        </div>
+
+        <!-- Profile content -->
+        <div class="col p-4" id="profileContent" style="display: none">
+            <h1 class="display-4 text-center">Profile</h1>
+            <br>
+
+        </div>
+
+        <!-- Generate QR content -->
+        <div class="col p-4" id="backupContent" style="display: none">
+            <h1 class="display-4 text-center">Generate Additional Backups</h1>
+            <br>
+
+        </div>
+
+        <!-- Validate QR content -->
+        <div class="col p-4" id="validateQRContent" style="display: none">
+            <h1 class="display-4 text-center">Validate QR Backup</h1>
+            <br>
+
+        </div>
+
+        <!-- Guide content -->
+        <div class="col p-4" id="guideContent" style="display: none">
+            <h1 class="display-4 text-center">Vault Guide</h1>
+            <br>
+
+        </div>
+
+        <!-- FAQ content -->
+        <div class="col p-4" id="faqContent" style="display: none">
+            <h1 class="display-4 text-center">FAQ</h1>
+            <br>
+
+        </div>
+
+        <!-- About content -->
+        <div class="col p-4" id="aboutContent" style="display: none">
+            <h1 class="display-4 text-center">About Vault</h1>
+            <br>
+
+        </div>
 
         <!-- Modal for confirming account password -->
         <div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel" aria-hidden="true">
@@ -282,14 +314,33 @@
                                 <label for="email" class="col-form-label">Email:</label>
                                 <input type="email" class="form-control" id="email">
                             </div>
-                            <div class="form-group">
-                                <label for="password" class="col-form-label">Password:</label>
+
+
+                            <label for="password" class="col-form-label">Password:</label>
+                            <div class="input-group mb-3" id="">
                                 <input type="password" class="form-control" id="passwordToStore">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-success" type="button" id="generateButton" onclick="generatePassword('add')">Generate</button>
+                                </div>
                             </div>
+                            <div class="input-group mb-3" id="" style="display: none">
+                                <input type="text" class="form-control" id="passwordToStore">
+                            </div>
+
                             <div class="form-group">
                                 <label for="password" class="col-form-label">Confirm Password:</label>
                                 <input type="password" class="form-control" id="confirmPasswordToStore">
                             </div>
+
+
+{{--                            <div class="form-group">--}}
+{{--                                <label for="password" class="col-form-label">Password:</label>--}}
+{{--                                <input type="password" class="form-control" id="passwordToStore">--}}
+{{--                            </div>--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label for="password" class="col-form-label">Confirm Password:</label>--}}
+{{--                                <input type="password" class="form-control" id="confirmPasswordToStore">--}}
+{{--                            </div>--}}
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -357,14 +408,33 @@
                             </div>
                             <br>
                             <h5>Update Password</h5>
-                            <div class="form-group">
-                                <label for="password" class="col-form-label">New Password:</label>
+
+
+                            <label for="password" class="col-form-label">New Password:</label>
+                            <div class="input-group mb-3" id="">
                                 <input type="password" class="form-control" id="newPasswordToStore">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-success" type="button" id="generateButton" onclick="generatePassword('edit')">Generate</button>
+                                </div>
                             </div>
+                            <div class="input-group mb-3" id="decryptedPasswordInputBox" style="display: none">
+                                <input type="text" class="form-control" id="newPasswordToStore">
+                            </div>
+
                             <div class="form-group">
                                 <label for="password" class="col-form-label">Confirm New Password:</label>
                                 <input type="password" class="form-control" id="confirmNewPasswordToStore">
                             </div>
+
+
+{{--                            <div class="form-group">--}}
+{{--                                <label for="password" class="col-form-label">New Password:</label>--}}
+{{--                                <input type="password" class="form-control" id="newPasswordToStore">--}}
+{{--                            </div>--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label for="password" class="col-form-label">Confirm New Password:</label>--}}
+{{--                                <input type="password" class="form-control" id="confirmNewPasswordToStore">--}}
+{{--                            </div>--}}
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -388,6 +458,11 @@
         //open modal if password has been entered otherwise ask for password confirmation
         function openModal(id, data = []){
             if(checkIfPassword()){
+                document.getElementById('passwordToStore').value = '';
+                document.getElementById('confirmPasswordToStore').value = '';
+                document.getElementById('newPasswordToStore').value = '';
+                document.getElementById('confirmNewPasswordToStore').value = '';
+
                 toggleModal(id, data);
             }
             else{
@@ -484,6 +559,20 @@ console.log('pass ' + decryptedPassword);
             notify('Copied to clipboard', 'success');
         }
 
+        function generatePassword(modal){
+            let password = secrets.random(64);
+
+            if(modal === 'edit'){
+                document.getElementById('newPasswordToStore').value = password;
+                document.getElementById('confirmNewPasswordToStore').value = password;
+            }
+            else if(modal === 'add'){
+                document.getElementById('passwordToStore').value = password;
+                document.getElementById('confirmPasswordToStore').value = password;
+            }
+
+        }
+
         //check if the user has entered their password or not
         function checkIfPassword(){
             if(password){ return true; }
@@ -532,12 +621,16 @@ console.log('pass ' + decryptedPassword);
             toggleLoading();
         }
 
-        function toggleDiv(div) {
-            if (div.style.display === "none") {
-                div.style.display = "block";
-            } else {
-                div.style.display = "none";
-            }
+        function toggleContent(id){
+            hideDiv('dashboardContent');
+            hideDiv('profileContent');
+            hideDiv('backupContent');
+            hideDiv('validateQRContent');
+            hideDiv('guideContent');
+            hideDiv('faqContent');
+            hideDiv('aboutContent');
+            showDiv(id);
+            console.log('toggle fired');
         }
 
         function confirmDeletePassword(id){

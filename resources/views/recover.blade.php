@@ -17,6 +17,17 @@
             width: 100%;
             height: auto;
         }
+
+        .progress {
+            text-align:center;
+            max-width:640px;
+            margin:15px auto;
+        }
+        .progress-value {
+            position:absolute;
+            right:0;
+            left:0;
+        }
     </style>
 
     <!-- Bootstrap NavBar -->
@@ -30,11 +41,39 @@
         </a>
     </nav><!-- NavBar END -->
 
-    <br><br><br><br><br>
+    <br>
 
     <div class="container content">
+        <h1 class="display-4 text-center">Recover Your Vault</h1>
+
+        <br>
+
+        <div id="step1">
+            <p class="text-center">
+                If you have forgotten your password you may use your backups to recover your account.
+            </p>
+            <p class="text-center">
+                To begin, please scan any 2 of your 3 backup QR codes.
+            </p>
+        </div>
+
+        <div id="step2" style="display: none">
+            <p class="text-center">
+                Your account has been successfully recovered.
+            </p>
+            <p class="text-center">
+                Please reset your password below.
+            </p>
+        </div>
+
+        <br><br>
+
         <div class="row d-flex justify-content-center" id="videoDiv">
             <video class="video" id="video"></video>
+        </div>
+
+        <div class="progress" id="progressBar">
+            <div class="progress-bar bg-success" role="progressbar" id="bar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
         </div>
 
         <!-- Modal for viewing and editing a stored password -->
@@ -51,8 +90,8 @@
                 </div>
             </form>
             <div class="">
-                <button type="button" class="btn btn-outline-secondary" onclick="back()">Back</button>
-                <button type="button" class="btn btn-outline-primary" onclick="submitPassword()" id="submitButton">Submit</button>
+                <button type="button" class="btn btn-outline-primary pull-right" onclick="submitPassword()" id="submitButton">Submit</button>
+                <button type="button" class="btn btn-outline-secondary pull-right" onclick="back()">Back</button>
             </div>
         </div>
         <br><br>
@@ -82,6 +121,8 @@
 
         //combine shares & compute master hash
         function reconstruct() {
+            toggleLoading();
+
             //combine shares
             let result = recoverShamir();
 
@@ -144,15 +185,17 @@ console.log('HERE: ' + aesDecrypt(newEncryptedMaster, newKek, masterIV));
         scanner.addListener('scan', function (content) {
             console.log(content);
             if(!readCodes.includes(content)){
-                readCodes.push(content)
+                readCodes.push(content);
+                notify('Code Scanned', 'success');
             }
+            setProgressbar(parseInt(document.querySelector('.progress-bar').getAttribute('aria-valuenow'))+50);
             checkCodes();
             console.log(readCodes);
         });
 
         Instascan.Camera.getCameras().then(function (cameras) {
             if (cameras.length > 0) {
-                scanner.start(cameras[0]);
+                scanner.start(cameras[1]);
             } else {
                 console.error('No cameras found.');
             }
@@ -168,6 +211,7 @@ console.log('HERE: ' + aesDecrypt(newEncryptedMaster, newKek, masterIV));
                 data: {master: master, password: password, _token: '{{Session::token()}}'}
             })
                 .done(function (msg) {
+                    toggleLoading();
                     console.log(msg);
 
                     //if successful then redirect to dashboard
@@ -175,7 +219,8 @@ console.log('HERE: ' + aesDecrypt(newEncryptedMaster, newKek, masterIV));
                         location.href = '{{url('dashboard')}}';
                     }
                 });
-        }
+            toggleLoading()
+;        }
 
         //ajax request to log the user in with the provided master hash
         function postRecoveryLogin(token, hash){
@@ -185,23 +230,37 @@ console.log('HERE: ' + aesDecrypt(newEncryptedMaster, newKek, masterIV));
                 data: {token: token, masterHash: hash, _token: '{{Session::token()}}'}
             })
                 .done(function (msg) {
+                    toggleLoading();
                     console.log(msg);
 
                     //if successful then...
                     if(msg.success){
+                        $('#step1').hide();
+                        $('#progressBar').hide();
                         $('#video').hide();
                         $('#form').show();
+                        $('#step2').show();
                         kekSalt = msg.user.kek_salt;
                         masterIV = msg.user.master_iv;
                         email = msg.user.email;
 
                         notify('Login Successful', 'success');
                     }
+                    else{
+                        notify('Recovery Failed', 'error');
+                        readCodes = [];
+                        setProgressbar(0);
+                    }
                 });
         }
     </script>
 
     <script>
+        function setProgressbar(value){
+            $('.progress-bar').css('width', value + '%').attr('aria-valuenow', value);
+            document.getElementById('bar').innerHTML = value + '%';
+        }
+
         function aesEncrypt(text, key, iv){
             return CryptoJS.AES.encrypt(text, key, { iv: iv }).toString();
         }

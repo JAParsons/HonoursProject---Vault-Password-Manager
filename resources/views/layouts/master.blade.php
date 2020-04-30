@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ENG">
+<html lang="en">
 <head>
     <title>@yield('title')</title>
     <link rel="icon" type="image/png" href="images/favicon/favicon-32x32.png" sizes="32x32" />
@@ -107,6 +107,25 @@
         else{
             closeWaitMeLoader();
         }
+    }
+
+    function toggleDiv(div) {
+        div = document.getElementById(div);
+        if (div.style.display === "none") {
+            div.style.display = "block";
+        } else {
+            div.style.display = "none";
+        }
+    }
+
+    function hideDiv(div) {
+        div = document.getElementById(div);
+        div.style.display = "none";
+    }
+
+    function showDiv(div) {
+        div = document.getElementById(div);
+        div.style.display = "block";
     }
 </script>
 

@@ -57,19 +57,26 @@ class AjaxController extends Controller
     public function postRecoveryLogin(Request $request)
     {
         $success = false;
+        $msg = 'Invalid backups';
         $salt = '';
         $user = User::where(['token' => $request->token])->first();
 
-        if (Hash::check($request->masterHash, $user->master_hash)){
-            Auth::login($user);
-            $salt = $user->master_salt;
-            $success = true;
+        try {
+            if (Hash::check($request->masterHash, $user->master_hash)){
+                Auth::login($user);
+                $salt = $user->master_salt;
+                $success = true;
+            }
+        }
+        catch (\ErrorException $error){
+
         }
 
         return response()->
         json($response = array(
             'success' => $success,
             'user' => $user,
+            'msg' => $msg,
         ));
     }
 
@@ -77,6 +84,7 @@ class AjaxController extends Controller
     public function postMasterHash(Request $request)
     {
         $success = false;
+        $msg = '';
         $user = Auth::user();
 
         $user->master_hash = bcrypt($request->masterHash);
@@ -84,11 +92,14 @@ class AjaxController extends Controller
         if ($user->save()){
             $success = true;
         }
+        else{
+            $msg = 'Unexpected error occurred, please try again';
+        }
 
         return response()->
         json($response = array(
             'success' => $success,
-            'msg' => $request->masterHash
+            'msg' => $msg
         ));
     }
 
