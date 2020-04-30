@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ENG">
+<html lang="en">
 <head>
     <title>@yield('title')</title>
     <link rel="icon" type="image/png" href="images/favicon/favicon-32x32.png" sizes="32x32" />

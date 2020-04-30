@@ -33,37 +33,48 @@
         <br>
 
         <div class="container" id="qrContent" style="display: none">
+            <div class="text-center">
+                <h5>
+                    This is your emergency backup.
+                </h5>
+                <h5>
+                    You may use these in the event that you forget your login credentials.
+                </h5>
+                <h5>
+                    Please print these now as it will be the only opportunity to do so.
+                </h5>
+            </div>
             <div class="row d-flex justify-content-center">
                 <div>
                     <div class="d-flex p-2" id="qrcode0"></div>
                     <div class="text-center">
-                        <a href="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2866&q=80" download="file.jpg" style="text-decoration: none">
-                            <button type="button" class="btn btn-primary">Save</button>
-                        </a>
+{{--                        <a href="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2866&q=80" download="file.jpg" style="text-decoration: none">--}}
+{{--                            <button type="button" class="btn btn-primary">Save</button>--}}
+{{--                        </a>--}}
                         <button type="button" class="btn btn-primary" onclick="printImage('qrcode0')">Print</button>
                     </div>
                 </div>
                 <div>
                     <div class="d-flex p-2" id="qrcode1"></div>
                     <div class="text-center">
-                        <a href="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2866&q=80" download="file" style="text-decoration: none">
-                            <button type="button" class="btn btn-primary">Save</button>
-                        </a>
+{{--                        <a href="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2866&q=80" download="file" style="text-decoration: none">--}}
+{{--                            <button type="button" class="btn btn-primary">Save</button>--}}
+{{--                        </a>--}}
                         <button type="button" class="btn btn-primary" onclick="printImage('qrcode1')">Print</button>
                     </div>
                 </div>
                 <div>
                     <div class="d-flex p-2" id="qrcode2"></div>
                     <div class="text-center">
-                        <a href="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2866&q=80" download="file" style="text-decoration: none">
-                            <button type="button" class="btn btn-primary">Save</button>
-                        </a>
+{{--                        <a href="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2866&q=80" download="file" style="text-decoration: none">--}}
+{{--                            <button type="button" class="btn btn-primary">Save</button>--}}
+{{--                        </a>--}}
                         <button type="button" class="btn btn-primary" onclick="printImage('qrcode2')">Print</button>
                     </div>
                 </div>
             </div>
             <br>
-            <button type="button" class="btn btn-primary" onclick="location.href='{{url('dashboard')}}'">Continue</button>
+            <button type="button" class="btn btn-primary pull-right" onclick="location.href='{{url('dashboard')}}'">Continue</button>
         </div>
 
     </div>
@@ -193,7 +204,7 @@
             for(i=0; i<num; i++){
                 document.getElementById('qrcode'+i).innerHTML = "";
                 createQrCode('qrcode'+i, shares[i]);
-                document.getElementById('qrContent').getElementsByTagName('a')[i].href = document.getElementById('qrcode'+i).getElementsByTagName('img')[0].src;
+                //document.getElementById('qrContent').getElementsByTagName('a')[i].href = document.getElementById('qrcode'+i).getElementsByTagName('img')[0].src;
             }
             showDiv('qrContent');
         }

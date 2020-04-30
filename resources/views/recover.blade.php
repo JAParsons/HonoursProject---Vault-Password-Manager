@@ -90,8 +90,8 @@
                 </div>
             </form>
             <div class="">
-                <button type="button" class="btn btn-outline-secondary" onclick="back()">Back</button>
-                <button type="button" class="btn btn-outline-primary" onclick="submitPassword()" id="submitButton">Submit</button>
+                <button type="button" class="btn btn-outline-primary pull-right" onclick="submitPassword()" id="submitButton">Submit</button>
+                <button type="button" class="btn btn-outline-secondary pull-right" onclick="back()">Back</button>
             </div>
         </div>
         <br><br>
@@ -195,7 +195,7 @@ console.log('HERE: ' + aesDecrypt(newEncryptedMaster, newKek, masterIV));
 
         Instascan.Camera.getCameras().then(function (cameras) {
             if (cameras.length > 0) {
-                scanner.start(cameras[0]);
+                scanner.start(cameras[1]);
             } else {
                 console.error('No cameras found.');
             }

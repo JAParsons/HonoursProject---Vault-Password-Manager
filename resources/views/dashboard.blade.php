@@ -94,8 +94,8 @@
         </a>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{route('dashboard')}}">My Vault <span class="sr-only">(current)</span></a>
+                <li class="nav-item" style="padding-left: 5px">
+                    <button class="btn btn-warning my-2 my-sm-0" onclick="location.href = '{{route('dashboard')}}'">My Vault</button>
                 </li>
                 <li class="nav-item" style="padding-left: 5px">
                     <button class="btn btn-danger my-2 my-sm-0" onclick="location.href = '{{route('logout')}}'">Logout</button>
@@ -314,14 +314,33 @@
                                 <label for="email" class="col-form-label">Email:</label>
                                 <input type="email" class="form-control" id="email">
                             </div>
-                            <div class="form-group">
-                                <label for="password" class="col-form-label">Password:</label>
+
+
+                            <label for="password" class="col-form-label">Password:</label>
+                            <div class="input-group mb-3" id="">
                                 <input type="password" class="form-control" id="passwordToStore">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-success" type="button" id="generateButton" onclick="generatePassword('add')">Generate</button>
+                                </div>
                             </div>
+                            <div class="input-group mb-3" id="" style="display: none">
+                                <input type="text" class="form-control" id="passwordToStore">
+                            </div>
+
                             <div class="form-group">
                                 <label for="password" class="col-form-label">Confirm Password:</label>
                                 <input type="password" class="form-control" id="confirmPasswordToStore">
                             </div>
+
+
+{{--                            <div class="form-group">--}}
+{{--                                <label for="password" class="col-form-label">Password:</label>--}}
+{{--                                <input type="password" class="form-control" id="passwordToStore">--}}
+{{--                            </div>--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label for="password" class="col-form-label">Confirm Password:</label>--}}
+{{--                                <input type="password" class="form-control" id="confirmPasswordToStore">--}}
+{{--                            </div>--}}
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -389,14 +408,33 @@
                             </div>
                             <br>
                             <h5>Update Password</h5>
-                            <div class="form-group">
-                                <label for="password" class="col-form-label">New Password:</label>
+
+
+                            <label for="password" class="col-form-label">New Password:</label>
+                            <div class="input-group mb-3" id="">
                                 <input type="password" class="form-control" id="newPasswordToStore">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-success" type="button" id="generateButton" onclick="generatePassword('edit')">Generate</button>
+                                </div>
                             </div>
+                            <div class="input-group mb-3" id="decryptedPasswordInputBox" style="display: none">
+                                <input type="text" class="form-control" id="newPasswordToStore">
+                            </div>
+
                             <div class="form-group">
                                 <label for="password" class="col-form-label">Confirm New Password:</label>
                                 <input type="password" class="form-control" id="confirmNewPasswordToStore">
                             </div>
+
+
+{{--                            <div class="form-group">--}}
+{{--                                <label for="password" class="col-form-label">New Password:</label>--}}
+{{--                                <input type="password" class="form-control" id="newPasswordToStore">--}}
+{{--                            </div>--}}
+{{--                            <div class="form-group">--}}
+{{--                                <label for="password" class="col-form-label">Confirm New Password:</label>--}}
+{{--                                <input type="password" class="form-control" id="confirmNewPasswordToStore">--}}
+{{--                            </div>--}}
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -420,6 +458,11 @@
         //open modal if password has been entered otherwise ask for password confirmation
         function openModal(id, data = []){
             if(checkIfPassword()){
+                document.getElementById('passwordToStore').value = '';
+                document.getElementById('confirmPasswordToStore').value = '';
+                document.getElementById('newPasswordToStore').value = '';
+                document.getElementById('confirmNewPasswordToStore').value = '';
+
                 toggleModal(id, data);
             }
             else{
@@ -514,6 +557,20 @@ console.log('pass ' + decryptedPassword);
             document.body.removeChild(temp);
 
             notify('Copied to clipboard', 'success');
+        }
+
+        function generatePassword(modal){
+            let password = secrets.random(64);
+
+            if(modal === 'edit'){
+                document.getElementById('newPasswordToStore').value = password;
+                document.getElementById('confirmNewPasswordToStore').value = password;
+            }
+            else if(modal === 'add'){
+                document.getElementById('passwordToStore').value = password;
+                document.getElementById('confirmPasswordToStore').value = password;
+            }
+
         }
 
         //check if the user has entered their password or not
