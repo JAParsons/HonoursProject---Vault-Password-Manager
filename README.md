@@ -11,7 +11,7 @@ The workings of the secret-sharing scheme are as follows:
 
 -   A user enters some sensitive information such as a password or encryption key which they wish to backup.
     
--   This information is distributed across a number of QR codes like so.
+-   This information is distributed across a number of QR codes.
     
 -   In the event that the information needs to be recovered, a majority of the shares can be brought together in order to reconstruct the original data.
 
